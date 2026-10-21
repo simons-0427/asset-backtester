@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" type="image/svg+xml" href="../../images/favicons/favicon-1g-dotgrid.svg">
+  <link rel="alternate icon" type="image/png" href="../../images/favicons/favicon-1g-dotgrid-32.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="../../images/favicons/favicon-1g-dotgrid-180.png">
+  <title>Assetklassen-Backtester | Historische Renditen vergleichen</title>
+  <meta name="description" content="Vergleiche S&amp;P 500, Bitcoin und Gold über denselben historischen Zeitraum: Rendite, CAGR, Drawdown, Volatilität und risikobereinigte Kennzahlen.">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://smstark-projekt.de/dashboards/backtester/">
+  <meta property="og:type" content="website">
+  <meta property="og:locale" content="de_DE">
+  <meta property="og:url" content="https://smstark-projekt.de/dashboards/backtester/">
+  <meta property="og:title" content="Assetklassen-Backtester">
+  <meta property="og:description" content="Vergleiche, was aus 10.000 € in S&amp;P 500, Bitcoin oder Gold geworden wäre.">
+  <meta property="og:image" content="https://smstark-projekt.de/dashboards/backtester/assets/og-backtester.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="Dunkle Vorschaukarte des Assetklassen-Backtesters mit S&amp;P 500, Bitcoin und Gold">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="https://smstark-projekt.de/dashboards/backtester/assets/og-backtester.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&amp;family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,300&amp;display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/asset-backtester.css">
+  <script src="assets/vendor/chart.umd.min.js" defer></script>
+  <script type="module" src="assets/js/asset-backtester/app.js"></script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "Assetklassen-Backtester",
+    "url": "https://smstark-projekt.de/dashboards/backtester/",
+    "applicationCategory": "FinanceApplication",
+    "operatingSystem": "Web",
+    "inLanguage": "de",
+    "description": "Historischer Vergleich von S&P 500, Bitcoin und Gold mit Rendite-, Risiko- und Verteilungskennzahlen auf derselben Kapitalbasis.",
+    "isAccessibleForFree": true,
+    "author": {"@type": "Person", "name": "Simon Stark"}
+  }
+  </script>
+</head>
+<body>
+  <nav class="main-nav" aria-label="Hauptnavigation">
+    <a href="../../" class="nav-logo" aria-label="Zur Startseite">sms<span>.</span></a>
+    <ul class="nav-links">
+      <li><a href="../../">Home</a></li>
+      <li><a href="../../projekte">Projekte</a></li>
+      <li><a href="../../downloads">Downloads</a></li>
+      <li><a href="../../projekt-pipeline">Projekt-Pipeline</a></li>
+      <li><a href="../../vision">Vision</a></li>
+      <li><a href="../../wissen">Wissen</a></li>
+    </ul>
+    <a href="https://github.com/simons-0427" target="_blank" rel="noopener noreferrer" class="nav-github">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/></svg>
+      GitHub
+    </a>
+    <button class="nav-toggle" type="button" aria-label="Menü öffnen" aria-expanded="false" aria-controls="mobile-menu">
+      <span></span><span></span><span></span>
+    </button>
+  </nav>
+
+  <div class="mobile-menu" id="mobile-menu">
+    <ul>
+      <li><a href="../../">Home</a></li>
+      <li><a href="../../projekte">Projekte</a></li>
+      <li><a href="../../downloads">Downloads</a></li>
+      <li><a href="../../projekt-pipeline">Projekt-Pipeline</a></li>
+      <li><a href="../../vision">Vision</a></li>
+      <li><a href="../../wissen">Wissen</a></li>
+      <li><a href="https://github.com/simons-0427" target="_blank" rel="noopener noreferrer" class="mobile-github">GitHub</a></li>
+    </ul>
+  </div>
+
+  <main class="asset-backtester" id="main-content">
+    <header class="asset-backtester__page-head">
+      <nav class="asset-backtester__breadcrumb" aria-label="Breadcrumb">
+        <a href="../../">Home</a><span aria-hidden="true">/</span>
+        <a href="../../#dashboards">Dashboards</a><span aria-hidden="true">/</span>
+        <span aria-current="page">Backtester</span>
+      </nav>
+      <div class="asset-backtester__head-row">
+        <div>
+          <p class="asset-backtester__eyebrow">Historischer Vergleich</p>
+          <h1>Assetklassen-<em>Backtester</em></h1>
+          <p class="asset-backtester__subtitle">Vergleiche, was aus 10.000 € geworden wäre.</p>
+          <p class="asset-backtester__intro">Vergleiche S&amp;P 500, Bitcoin und Gold mit demselben Startkapital. Die Berechnung verwendet gespeicherte Schluss- und Referenzwerte, keine Prognosen oder Intraday-Kurse.</p>
+        </div>
+        <div class="asset-backtester__data-badge" id="global-data-status" aria-live="polite">
+          <span class="asset-backtester__status-dot" aria-hidden="true"></span>
+          <span>Datenstand wird geladen</span>
+        </div>
+      </div>
+    </header>
+
+    <noscript>
+      <div class="asset-backtester__notice asset-backtester__notice--error">Für Tabellen, Charts und Zeitraumsteuerung wird JavaScript benötigt.</div>
+    </noscript>
+    <div class="asset-backtester__live" id="app-live-region" role="status" aria-live="polite"></div>
+
+    <section class="asset-backtester__section asset-backtester__section--summary" aria-labelledby="summary-title">
+      <div class="asset-backtester__section-head">
+        <div>
+          <p class="asset-backtester__section-label">Marktübersicht</p>
+          <h2 id="summary-title">Renditen bis zum gemeinsamen Datenstand</h2>
+        </div>
+        <p>Feste Zeiträume mit 10.000 € Startkapital</p>
+      </div>
+      <div class="asset-backtester__table-scroll" tabindex="0" aria-label="Mehrperiodenvergleich, horizontal verschiebbar">
+        <table class="asset-backtester__table" id="summary-table">
+          <caption class="sr-only">Renditevergleich für S&amp;P 500, Bitcoin und Gold über sieben Zeiträume</caption>
+          <thead>
+            <tr>
+              <th scope="col">Asset</th>
+              <th scope="col">1W</th>
+              <th scope="col">1M</th>
+              <th scope="col">6M</th>
+              <th scope="col">1Y</th>
+              <th scope="col">3Y</th>
+              <th scope="col">5Y</th>
+              <th scope="col">10Y</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr data-summary-row="sp500"><th scope="row"><span class="asset-backtester__asset-mark asset-backtester__asset-mark--sp500"></span>S&amp;P 500</th></tr>
+            <tr data-summary-row="bitcoin"><th scope="row"><span class="asset-backtester__asset-mark asset-backtester__asset-mark--bitcoin"></span>Bitcoin</th></tr>
+            <tr data-summary-row="gold"><th scope="row"><span class="asset-backtester__asset-mark asset-backtester__asset-mark--gold"></span>Gold</th></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="asset-backtester__table-note" id="summary-note">Fokussiere eine Tabellenzelle, um Stichtag und Ausgangswert zu sehen.</p>
+    </section>
+
+    <section class="asset-backtester__section" aria-labelledby="single-charts-title">
+      <div class="asset-backtester__section-head">
+        <div>
+          <p class="asset-backtester__section-label">Einzelverläufe</p>
+          <h2 id="single-charts-title">Gespeicherte Schluss- und Referenzwerte</h2>
+        </div>
+        <p>Zeitraum pro Anlageklasse wählen</p>
+      </div>
+
+      <div class="asset-backtester__single-grid">
+        <article class="asset-backtester__chart-card" data-single-chart="sp500">
+          <div class="asset-backtester__chart-head">
+            <div>
+              <p class="asset-backtester__chart-kicker"><span class="asset-backtester__line-key asset-backtester__line-key--sp500"></span>Aktienmarkt USA</p>
+              <h3>S&amp;P 500</h3>
+                        <p class="asset-backtester__proxy" data-proxy>Preisreihe in EUR</p>
+            </div>
+            <div class="asset-backtester__quote">
+              <strong data-last-value>–</strong>
+              <span data-interval-return>– im Zeitraum</span>
+            </div>
+          </div>
+          <div class="asset-backtester__intervals" role="group" aria-label="Zeitraum für S&amp;P 500" data-intervals="sp500"></div>
+          <div class="asset-backtester__chart-frame">
+            <div class="asset-backtester__skeleton" aria-hidden="true"></div>
+            <canvas id="chart-sp500" aria-label="Historischer Verlauf des S&amp;P-500-Proxys" role="img"></canvas>
+            <div class="asset-backtester__chart-state" data-chart-state hidden></div>
+          </div>
+          <div class="asset-backtester__chart-foot">
+            <span><b data-hypothetical>–</b> aus 10.000 €</span>
+            <span data-raw-date>Datenstand –</span>
+          </div>
+          <p class="asset-backtester__chart-summary sr-only" data-chart-summary></p>
+        </article>
+
+        <article class="asset-backtester__chart-card" data-single-chart="bitcoin">
+          <div class="asset-backtester__chart-head">
+            <div>
+              <p class="asset-backtester__chart-kicker"><span class="asset-backtester__line-key asset-backtester__line-key--bitcoin"></span>Krypto, BTC/EUR</p>
+              <h3>Bitcoin</h3>
+              <p class="asset-backtester__proxy" data-proxy>UTC-Tagesreferenzwert</p>
+            </div>
+            <div class="asset-backtester__quote">
+              <strong data-last-value>–</strong>
+              <span data-interval-return>– im Zeitraum</span>
+            </div>
+          </div>
+          <div class="asset-backtester__intervals" role="group" aria-label="Zeitraum für Bitcoin" data-intervals="bitcoin"></div>
+          <div class="asset-backtester__chart-frame">
+            <div class="asset-backtester__skeleton" aria-hidden="true"></div>
+            <canvas id="chart-bitcoin" aria-label="Historischer Bitcoin-Verlauf in Euro" role="img"></canvas>
+            <div class="asset-backtester__chart-state" data-chart-state hidden></div>
+          </div>
+          <div class="asset-backtester__chart-foot">
+            <span><b data-hypothetical>–</b> aus 10.000 €</span>
+            <span data-raw-date>Datenstand –</span>
+          </div>
+          <p class="asset-backtester__chart-summary sr-only" data-chart-summary></p>
+        </article>
+
+        <article class="asset-backtester__chart-card" data-single-chart="gold">
+          <div class="asset-backtester__chart-head">
+            <div>
+              <p class="asset-backtester__chart-kicker"><span class="asset-backtester__line-key asset-backtester__line-key--gold"></span>Edelmetall</p>
+              <h3>Gold</h3>
+              <p class="asset-backtester__proxy" data-proxy>Investierbarer EUR-Proxy</p>
+            </div>
+            <div class="asset-backtester__quote">
+              <strong data-last-value>–</strong>
+              <span data-interval-return>– im Zeitraum</span>
+            </div>
+          </div>
+          <div class="asset-backtester__intervals" role="group" aria-label="Zeitraum für Gold" data-intervals="gold"></div>
+          <div class="asset-backtester__chart-frame">
+            <div class="asset-backtester__skeleton" aria-hidden="true"></div>
+            <canvas id="chart-gold" aria-label="Historischer Verlauf des Gold-Proxys" role="img"></canvas>
+            <div class="asset-backtester__chart-state" data-chart-state hidden></div>
+          </div>
+          <div class="asset-backtester__chart-foot">
+            <span><b data-hypothetical>–</b> aus 10.000 €</span>
+            <span data-raw-date>Datenstand –</span>
+          </div>
+          <p class="asset-backtester__chart-summary sr-only" data-chart-summary></p>
+        </article>
+      </div>
+    </section>
+
+    <section class="asset-backtester__section" aria-labelledby="comparison-title">
+      <div class="asset-backtester__section-head">
+        <div>
+          <p class="asset-backtester__section-label">Gesamtvergleich</p>
+          <h2 id="comparison-title">Gleiches Startkapital im selben Zeitraum</h2>
+        </div>
+        <p>Alle Reihen starten bei deinem Startkapital</p>
+      </div>
+
+      <div class="asset-backtester__comparison-card">
+        <div class="asset-backtester__control-grid">
+          <div class="asset-backtester__field">
+            <label for="backtest-amount">Startkapital</label>
+            <div class="asset-backtester__money-input">
+              <input id="backtest-amount" type="number" min="100" max="10000000" step="100" value="10000" inputmode="decimal">
+              <span>€</span>
+            </div>
+          </div>
+          <fieldset class="asset-backtester__asset-selector">
+            <legend>Anlageklassen</legend>
+            <label><input type="checkbox" value="sp500" checked><span><i class="asset-backtester__line-key asset-backtester__line-key--sp500"></i>S&amp;P 500</span></label>
+            <label><input type="checkbox" value="bitcoin" checked><span><i class="asset-backtester__line-key asset-backtester__line-key--bitcoin"></i>Bitcoin</span></label>
+            <label><input type="checkbox" value="gold" checked><span><i class="asset-backtester__line-key asset-backtester__line-key--gold"></i>Gold</span></label>
+          </fieldset>
+        </div>
+
+        <div class="asset-backtester__comparison-toolbar">
+          <div class="asset-backtester__intervals" role="group" aria-label="Zeitraum für Gesamtvergleich" id="comparison-intervals"></div>
+          <div class="asset-backtester__custom-dates" id="comparison-custom-dates" hidden>
+            <label>Von <input type="date" id="comparison-start"></label>
+            <label>Bis <input type="date" id="comparison-end"></label>
+            <button type="button" id="apply-custom-range">Zeitraum anwenden</button>
+          </div>
+        </div>
+
+        <div class="asset-backtester__notice" id="comparison-warning" hidden>
+          <span></span>
+          <button type="button" id="use-common-start" hidden>Gemeinsamen Start übernehmen</button>
+        </div>
+
+        <div class="asset-backtester__chart-frame asset-backtester__chart-frame--comparison">
+          <div class="asset-backtester__skeleton" aria-hidden="true"></div>
+          <canvas id="chart-comparison" aria-label="Auf dasselbe Startkapital normierter Vergleich von S&amp;P 500, Bitcoin und Gold" role="img"></canvas>
+          <div class="asset-backtester__chart-state" id="comparison-chart-state" hidden></div>
+        </div>
+        <p class="asset-backtester__chart-summary sr-only" id="comparison-chart-summary"></p>
+      </div>
+    </section>
+
+    <section class="asset-backtester__section" aria-labelledby="metrics-title">
+      <div class="asset-backtester__section-head">
+        <div>
+          <p class="asset-backtester__section-label">Ergebnis</p>
+          <h2 id="metrics-title">Kennzahlen für den gewählten Backtest</h2>
+        </div>
+        <p id="metrics-period">Zeitraum wird geladen</p>
+      </div>
+      <div class="asset-backtester__table-scroll asset-backtester__table-scroll--metrics" tabindex="0">
+        <table class="asset-backtester__table asset-backtester__metrics" id="metrics-table">
+          <caption class="sr-only">Ergebniskennzahlen der ausgewählten Anlageklassen</caption>
+          <thead>
+            <tr>
+              <th scope="col">Asset</th>
+              <th scope="col">Endwert</th>
+              <th scope="col">Gewinn / Verlust</th>
+              <th scope="col">Gesamtrendite</th>
+              <th scope="col">CAGR</th>
+              <th scope="col">Max. Drawdown</th>
+              <th scope="col">Letzter echter Wert</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+      <div class="asset-backtester__metrics-head">
+        <h3>Risiko und Tagesverteilung</h3>
+        <p>Berechnet aus echten aufeinanderfolgenden Beobachtungen, ohne fortgeschriebene Wochenend- und Feiertagswerte.</p>
+      </div>
+      <div class="asset-backtester__table-scroll asset-backtester__table-scroll--metrics" tabindex="0">
+        <table class="asset-backtester__table asset-backtester__metrics asset-backtester__metrics--risk" id="risk-metrics-table">
+          <caption class="sr-only">Risiko- und Tageskennzahlen der ausgewählten Anlageklassen</caption>
+          <thead>
+            <tr>
+              <th scope="col">Asset</th>
+              <th scope="col"><abbr title="Annualisierte Standardabweichung der beobachteten Tagesrenditen">Volatilität p.a.</abbr></th>
+              <th scope="col"><abbr title="Annualisierte Durchschnittsrendite geteilt durch Volatilität, risikofreier Zins 0 Prozent">Sharpe (0 %)</abbr></th>
+              <th scope="col"><abbr title="CAGR geteilt durch den Betrag des maximalen Drawdowns">Calmar</abbr></th>
+              <th scope="col">Bester Tag</th>
+              <th scope="col">Schwächster Tag</th>
+              <th scope="col">Positive Tage</th>
+              <th scope="col">Tagesänderungen</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </section>
+
+    <aside class="asset-backtester__method-note">
+      <span aria-hidden="true">i</span>
+      <p>Der Backtester verwendet historische Schluss- und Referenzwerte. Tage ohne neuen Börsenwert führen den letzten bekannten Wert fort. Alle Diagramme nutzen eine logarithmische Y-Achse und zeigen ausschließlich positive Werte. <strong>Vergangene Wertentwicklung ist kein verlässlicher Indikator für zukünftige Ergebnisse.</strong></p>
+    </aside>
+
+    <section class="asset-backtester__section asset-backtester__section--method" aria-labelledby="method-title">
+      <div class="asset-backtester__section-head">
+        <div>
+          <p class="asset-backtester__section-label">Transparenz</p>
+          <h2 id="method-title">Methodik, Quellen und Datenstand</h2>
+        </div>
+      </div>
+      <details class="asset-backtester__details" open>
+        <summary>So wird der Vergleich berechnet</summary>
+        <div class="asset-backtester__details-body">
+          <p>Für jedes Asset werden Einheiten zum Wert am gemeinsamen Starttag berechnet. Der Verlauf entspricht anschließend <code>Startkapital × Wert(t) / Wert(Start)</code>. Wochenenden und Feiertage werden nur für die gemeinsame Kalenderachse fortgeführt; in der Datenbank bleiben ausschließlich echte Beobachtungen.</p>
+          <div class="asset-backtester__formula"><span>Portfoliowert(t)</span><strong>= Startkapital × Wert(t) / Wert(Start)</strong></div>
+          <p>Volatilität, Sharpe-Wert, bester und schwächster Tag sowie der Anteil positiver Tage verwenden nur Änderungen zwischen echten Beobachtungen. Die Volatilität und der Sharpe-Wert werden für S&amp;P 500 und Gold mit 252 Börsentagen, für Bitcoin mit 365,2425 Kalendertagen annualisiert. Beim Sharpe-Wert setzt der Backtester den risikofreien Zins auf 0 %.</p>
+          <p><a class="asset-backtester__knowledge-link" href="../../wissen/assetklassen-backtester-rendite-risiko">Im Wissensartikel werden Datenreihen, Berechnung und Grenzen des Backtests ausführlich erklärt.</a></p>
+        </div>
+      </details>
+      <details class="asset-backtester__details">
+        <summary>Datenreihen und Einschränkungen</summary>
+        <div class="asset-backtester__source-grid" id="source-grid">
+          <p class="asset-backtester__muted">Quellenmetadaten werden geladen.</p>
+        </div>
+      </details>
+      <div class="asset-backtester__future">
+        <p class="asset-backtester__section-label">Geplante Funktionen</p>
+        <div><span>Weitere Indizes und Immobilien</span><b>In Vorbereitung</b></div>
+        <div><span>Inflationsbereinigung</span><b>In Vorbereitung</b></div>
+        <div><span>Kosten und Steuern</span><b>In Vorbereitung</b></div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <a href="../../" class="footer-logo">sms<span>.</span></a>
+        <p>Finance-Tools, Dashboards und Programmierprojekte von Simon Stark.</p>
+      </div>
+      <div class="footer-col">
+        <h5>Navigation</h5>
+        <ul>
+          <li><a href="../../projekte">Projekte</a></li>
+          <li><a href="../../downloads">Downloads</a></li>
+          <li><a href="../../projekt-pipeline">Projekt-Pipeline</a></li>
+          <li><a href="../../vision">Vision</a></li>
+          <li><a href="../../wissen">Wissen</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h5>Rechtliches</h5>
+        <ul>
+          <li><a href="../../impressum">Impressum</a></li>
+          <li><a href="../../datenschutz">Datenschutz</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 Simon Stark</span>
+      <a href="https://github.com/simons-0427" target="_blank" rel="noopener noreferrer">GitHub: simons-0427</a>
+    </div>
+  </footer>
+</body>
+</html>

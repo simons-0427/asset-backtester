@@ -1,0 +1,6 @@
+date,value,currency,quality_status,source_revision
+2024-01-01,100,EUR,valid,v1
+2024-01-02,101,EUR,valid,v1
+2024-01-03,102,EUR,revised,v2
+2024-01-04,103,EUR,valid,v1
+
