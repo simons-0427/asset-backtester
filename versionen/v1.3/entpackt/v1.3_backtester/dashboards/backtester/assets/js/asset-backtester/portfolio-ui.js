@@ -1,0 +1,510 @@
+import { nextPaint } from './loading.js?v=20261028-v13y';
+import { TAX_DEFAULTS } from './tax-model.js?v=20261028-v13y';
+import { simulatePortfolioTaxes,portfolioTaxKey } from './portfolio-tax.js?v=20261028-v13y';
+import { PortfolioSingles, portfolioSingleRecords } from './portfolio-singles.js?v=20261028-v13y';
+import { initialRanking, sortMetricRows, sortSummaryTable } from './ranking.js?v=20261028-v13y';
+import { ASSETS, REFERENCE, OPTIONAL_RULES, OBJECTIVES, optimizationConfig, objectiveValue, assetLeverage, assetTer, limitEnabled, defaults, standardPortfolios, validateConfig,
+  prepareMarket, evaluate, optimize, diagnostics, portfolioPeriod, referenceVolatility, volatilityLimit } from './portfolio-engine.js?v=20261028-v13y';
+import { buildPortfolioComparison } from './portfolio-comparison.js?v=20261028-v13y';
+import { PortfolioStore, exportPortfolios } from './portfolio-store.js?v=20261028-v13y';
+import { escapeHtml as esc } from './formatters.js?v=20261028-v13y';
+
+const number = (v, digits = 2) => Number.isFinite(v) ? new Intl.NumberFormat('de-DE', { maximumFractionDigits: digits }).format(v) : 'Nicht berechenbar';
+const pct = (v) => Number.isFinite(v) ? `${number(v)} %` : 'Nicht berechenbar';
+const eur = (v) => new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 }).format(v);
+const labels = { daily: 'Tages', monthly: 'Monats', quarterly: 'Quartals' };
+const rebalancingLabels = {quarterly:'Quartalsweise',monthly:'Monatlich',yearly:'Jährlich',threshold:'Nach Gewichtsband',none:'Aus (Buy & Hold)'};
+const colors = ['#6ee7b7', '#818cf8', '#f6c85f', '#f472b6', '#38bdf8', '#fb923c', '#a3e635'];
+const copy = (v) => JSON.parse(JSON.stringify(v));
+const pause = () => new Promise((resolve) => setTimeout(resolve, 25));
+function slider(id, label, value, min, max, step = 0.5, attributes = '') {
+  return `<div class="portfolio-lab__slider"><input type="range" min="${min}" max="${max}" step="${step}" value="${value}" data-pf-slider-for="${id}" aria-label="${esc(label)} als Schieberegler"><div><input id="${id}" type="number" min="${min}" max="${max}" step="${step}" value="${value}" data-pf-number-slider="${id}" ${attributes}><span>%</span></div></div>`;
+}
+
+const BASE_RULE_HELP = {"alternatives":"Begrenzt den Gesamtanteil von Bitcoin, Gold, breiten Rohstoffen und Immobilien. Positionshebel zählen zur Marktexposition. Einstellbar von 0 bis 100 %.","position":"Begrenzt den Anteil jeder einzelnen alternativen Anlageklasse, etwa Bitcoin oder Gold. Positionshebel zählen zur Marktexposition. Einstellbar von 0 bis 100 %.","volatility":"Begrenzt die jährliche Schwankung des Portfolios in % p.a. Der Standard wird aus dem 60/40-Portfolio im aktuellen Zeitraum und Datenraster berechnet. Die Referenz enthält 60 % MSCI World und 40 % EUR-gesicherte globale IG-Anleihen mit quartalsweisem Rebalancing. Eigene Eingaben sind absolute Grenzen."};
+function ruleInfo(label,help,key) {
+  return '<button type="button" class="portfolio-lab__rule-info" data-rule-info="'+esc(key)+'" aria-label="'+esc(label+': '+help)+'"><span aria-hidden="true">i</span><span class="portfolio-lab__rule-tooltip" role="tooltip">'+esc(help)+'</span></button>';
+}
+function positionRuleTooltip(button) {
+  const tip=button.querySelector('[role="tooltip"]');if(!tip)return;
+  const box=button.getBoundingClientRect(),width=Math.min(280,window.innerWidth-32);
+  tip.style.width=width+'px';tip.style.left=Math.max(16,Math.min(box.left,window.innerWidth-width-16))+'px';
+  const height=tip.getBoundingClientRect().height;tip.style.top=(box.bottom+8+height>window.innerHeight?Math.max(8,box.top-height-8):box.bottom+8)+'px';
+}
+export class PortfolioLab {
+  constructor({ deferInitialReference=false, api, assets, onChange = () => {}, getComparisonStart = () => null, getComparisonEnd = () => null, getRanking = initialRanking, getSummarySort = () => ({period:'1Y',direction:'desc'}), getSummaryEnd = () => null, getTaxSettings = () => ({taxesEnabled:false}) }) {
+    this.deferInitialReference=deferInitialReference;
+    this.getTaxSettings=getTaxSettings;this.taxViewCache=new WeakMap();this.taxErrors=new Map();
+    this.getRanking=getRanking;this.getSummarySort=getSummarySort;this.getSummaryEnd=getSummaryEnd;this.api = api; this.assets = assets; this.onChange = onChange; this.getComparisonStart = getComparisonStart; this.comparisonStart = getComparisonStart(); this.comparisonEnd = getComparisonEnd();
+    this.volatilityReferenceRevision = 0; this.volatilityReferencePct = null; this.comparisonSelection = new Set(); this.results = new Map(); this.cache = new Map(); this.revision = 0; this.sequence = 0; this.dirtyIds = new Set(); this.jobs = new Set();
+    this.singleErrors = new Map(); this.enabledLeverage = new Set(); this.chart = null; this.drawdownChart = null; this.activeKey = ''; this.config = defaults(); this.saved = [];
+    this.config = this.draftConfig(this.config);
+    this.templates = standardPortfolios().map((c) => this.draftConfig(c));
+    try { this.store = new PortfolioStore(window.localStorage); this.saved = this.store.load(); }
+    catch (error) { this.storageError = error.message; }
+    this.mount(); this.renderForm(); this.renderLibrary(); this.renderLinked();
+    if (this.storageError) this.message(this.storageError, 'error');
+  }
+  draftConfig(config) {
+    return {...copy(config),amount:10000,start:this.comparisonStart || config.start,end:this.comparisonEnd || config.end,optimizationAssets:config.optimizationAssets ?? Object.keys(ASSETS)};
+  }
+  setComparisonRange(start, end) {
+    if (!start || !end || (start === this.comparisonStart && end === this.comparisonEnd)) return;
+    this.comparisonStart = start; this.comparisonEnd = end;
+    this.config.start = start; this.config.end = end;
+    this.templates = this.templates.map((c) => ({...c,start,end}));
+    this.results.clear(); this.invalidate({removeActive:false}); this.renderLibrary();
+    void this.restore();
+  }
+  mount() {
+    this.root = document.getElementById('portfolio-lab');
+    const showInfo=(event)=>{const button=event.target.closest('.portfolio-lab__rule-info');if(button)positionRuleTooltip(button);};
+    this.root.addEventListener('pointerover',showInfo);this.root.addEventListener('focusin',showInfo);
+    window.addEventListener('resize',()=>{const button=this.root.querySelector('.portfolio-lab__rule-info:hover, .portfolio-lab__rule-info:focus-visible');if(button)positionRuleTooltip(button);});
+    document.querySelector('.asset-backtester__comparison-config-menu .asset-backtester__config-options').insertAdjacentHTML('afterend', "<section class=\"portfolio-lab__comparison-options\" aria-label=\"Portfolios im Gesamtvergleich\"><h4>Portfolios</h4><p>Portfolios für den Vergleich auswählen. Jedes startet mit 10.000 €. </p><div id=\"comparison-portfolios\" class=\"asset-backtester__config-options\"></div></section>");
+    document.querySelector('#comparison-portfolios').addEventListener('change', (event) => {
+      const input = event.target.closest('[data-portfolio-option]'); if (!input) return;
+      if (input.checked) this.comparisonSelection.add(input.dataset.portfolioOption); else this.comparisonSelection.delete(input.dataset.portfolioOption);
+      this.renderLinked(); this.onChange();
+    });
+    this.root.innerHTML = `
+      <div class="portfolio-lab__intro"><div>
+        <h2>Portfolio zusammenstellen</h2><p>Gewichte festlegen, Regeln prüfen und Portfolios vergleichen.</p></div>
+        <span class="portfolio-lab__storage">Gespeicherte Portfolios <b id="pf-slot-count">0 / 5</b></span></div>
+      <div class="portfolio-lab__library"><div><span class="portfolio-lab__step">STARTPUNKT</span><div id="pf-templates" class="portfolio-lab__templates"></div></div>
+        <div><label for="pf-saved">Deine Portfolios</label><div class="portfolio-lab__saved"><select id="pf-saved"><option value="">Gespeichertes Portfolio wählen</option></select>
+          <button type="button" data-pf-action="load">Laden</button><button type="button" data-pf-action="delete">Löschen</button></div>
+          <p class="portfolio-lab__hint">Zwei Vorlagen und fünf eigene Portfolios.</p></div></div>
+      <form id="pf-form" novalidate>
+        <div class="portfolio-lab__editor"><div class="portfolio-lab__composition"><div class="portfolio-lab__section-title"><h4>Zusammenstellen</h4><button type="button" data-pf-action="new">Neues Portfolio</button></div>
+          <label for="pf-name">Portfolioname</label><input id="pf-name" maxlength="80" required>
+          <label for="pf-description">Beschreibung <small>optional</small></label><input id="pf-description" maxlength="500">
+          <div class="portfolio-lab__allocation" id="pf-allocation" aria-hidden="true"></div>
+          <div class="portfolio-lab__weights" id="pf-weights"></div>
+          <div class="portfolio-lab__weight-total" id="pf-weight-total" aria-live="polite"></div>
+          <div class="portfolio-lab__add"><label class="sr-only" for="pf-add-asset">Anlageklasse hinzufügen</label><select id="pf-add-asset"></select><button type="button" data-pf-action="add-asset">Hinzufügen</button></div>
+        </div><div class="portfolio-lab__settings"><h4>Regeln &amp; Zeitraum</h4>
+          <div id="pf-mandatory"></div>
+          <div id="pf-rules"></div><div class="portfolio-lab__add"><label class="sr-only" for="pf-add-rule">Weitere Regel</label><select id="pf-add-rule"></select><button type="button" data-pf-action="add-rule">Regel hinzufügen</button></div>
+          <p class="portfolio-lab__hint">Portfolios starten immer mit 10.000 €.</p><div class="portfolio-lab__fields">
+            
+            <div class="portfolio-lab__strategy-row"><label>Datenraster<select id="pf-frequency"><option value="auto">Automatisch</option><option value="daily">Täglich</option><option value="monthly">Monatlich</option><option value="quarterly">Quartalsweise</option></select></label><label>Rebalancing<select id="pf-rebalancing"><option value="none">Aus</option><option value="monthly">Monatlich</option><option value="quarterly">Quartalsweise</option><option value="yearly">Jährlich</option><option value="threshold">Nach Gewichtsband</option></select></label></div>
+            <label data-pf-threshold-field>Gewichtsband in Prozentpunkten<input id="pf-threshold" type="number" min="0.1" max="100" step="0.5" data-pf-number-slider="pf-threshold"><input type="range" min="0.5" max="100" step="0.5" value="5" data-pf-slider-for="pf-threshold" aria-label="Gewichtsband als Schieberegler"></label>
+            <label>Rollierendes Risikofenster (Monate)<input id="pf-rollingMonths" type="number" min="12" max="120" step="3" data-pf-number-slider="pf-rollingMonths"><input type="range" min="12" max="120" step="3" value="12" data-pf-slider-for="pf-rollingMonths" aria-label="Rollierendes Risikofenster als Schieberegler"></label></div>
+          <details class="portfolio-lab__leverage"><summary>Weitere Kosten <small>optional</small></summary>
+            <div class="portfolio-lab__fields"><label>Zusätzliche Portfolio-TER (% p.a.)<input id="pf-terPct" type="number" min="0" max="5" step="0.01"></label>
+              <label>Finanzierungszins (% p.a.)<input id="pf-financingPct" type="number" min="0" max="20" step="0.1"></label></div>
+            <p class="portfolio-lab__hint">Hebel und TER stellst du je Anlageklasse ein. Jede Position folgt ihren eigenen Kursbeobachtungen. Dazwischen bleibt ihr letzter Kurs stehen; Kosten werden zeitanteilig berücksichtigt. Der Finanzierungszins betrifft nur den geliehenen Anteil jeder Position. Bereits enthaltene Kosten nicht doppelt eintragen. Die 60/40-Referenz bleibt ungehebelt und ohne Zusatzkosten.</p>
+          </details>
+        </div></div>
+        <section class="portfolio-lab__optimizer" aria-label="Portfolio aus Regeln optimieren"><div class="portfolio-lab__optimizer-head"><div><span class="portfolio-lab__step">AUS REGELN OPTIMIEREN</span><h3>Ideale Gewichte suchen</h3><p>Du wählst Ziel und Regeln. Die Suche stellt das Portfolio automatisch zusammen.</p></div><button class="portfolio-lab__primary" type="button" data-pf-action="optimize">Portfolio aus Regeln optimieren</button></div>
+          <label for="pf-objective">Optimierungsziel</label><select id="pf-objective"></select><p class="portfolio-lab__hint" id="pf-objective-help"></p>
+          <details class="portfolio-lab__universe"><summary>Zulässige Anlageklassen <span id="pf-pool-count"></span></summary><div class="portfolio-lab__pool-actions"><button type="button" data-pf-action="pool-all">Alle auswählen</button><button type="button" data-pf-action="pool-editor">Aus Editor übernehmen</button></div><div id="pf-pool" class="portfolio-lab__pool"></div></details>
+          <p class="portfolio-lab__hint">Vorgegebene Gewichte sind keine Bindung. Hebel und TER aus dem Editor gelten weiter; zusätzliche Anlageklassen starten mit 1× und 0 % TER. Langsamere Reihen bestimmen das gemeinsame Datenraster. Ergebnis: beste gefundene historische Allokation, kein bewiesenes globales Optimum.</p>
+          <div id="pf-optimization-result" class="portfolio-lab__optimization-result" hidden aria-live="polite"></div>
+        </section>
+        <div class="portfolio-lab__actions"><div><span class="portfolio-lab__step">MANUELL FERTIGSTELLEN</span><p id="pf-draft-state">Entwurf. Noch keine Portfolioergebnisse.</p></div>
+          <div><button class="portfolio-lab__primary" type="submit">Portfolio fertigstellen</button></div></div>
+      </form>
+      <div id="pf-message" class="portfolio-lab__message" role="status" aria-live="polite" hidden></div>
+      <div class="portfolio-lab__save-actions"><button class="portfolio-lab__primary" type="button" data-pf-action="save" disabled>Portfolio speichern</button><button type="button" data-pf-action="duplicate" disabled>Als Kopie speichern</button>
+        <button type="button" data-pf-action="export">JSON exportieren</button><button type="button" data-pf-action="import">JSON importieren</button><input id="pf-import-file" type="file" accept="application/json,.json" hidden></div>
+      <details class="portfolio-lab__method"><summary>Modell und Datenbasis</summary><p>Vollständig investiertes Basisportfolio, optional mit Hebel und Kostenmodell. Bitcoin, Gold, Rohstoffe und Immobilien zählen hier als alternativ. Referenz: 60 % MSCI World und 40 % EUR-gesicherte globale IG-Anleihen, quartalsweise rebalanciert.</p>
+        <p>Portfolios werden nominal in EUR mit den von der API gelieferten Renditereihen berechnet. Währung, Inflation und Vergleichs-TER werden nicht übertragen. Der globale Steuerschalter gilt auch für Portfolios; Regeln und Optimierung verwenden Werte vor persönlichen Steuern. Immobilien verwenden den Preisindex ohne Mietcashflow. Ausschüttungsmodelle der Aktienreihen bleiben gekennzeichnet.</p>
+        <p>Die Bewertung erfolgt an jedem Kalendertag mit den jeweils letzten verfügbaren Kursen. Das Datenraster bestimmt ausschließlich die Risikomessung; automatisch berücksichtigt es langsamere Reihen. Die eingeschalteten Risikoprüfungen beziehen sich auf den gewählten historischen Zeitraum und garantieren keine künftigen Grenzen. Marktbedingte Quotenüberschreitungen werden bis zum nächsten Rebalancing ausgewiesen.</p>
+        <p>Die Optimierung sucht je Ziel begrenzt nach einer zulässigen historischen Allokation; sie beweist kein globales Optimum.</p></details>`;
+
+    this.riskOutput = document.createElement('div'); this.riskOutput.id = 'pf-risk-results'; this.riskOutput.className = 'portfolio-lab__results'; this.riskOutput.hidden = true;
+    document.querySelector('#risk-metrics-table').closest('.asset-backtester__table-scroll').insertAdjacentElement('afterend', this.riskOutput);
+    this.root.querySelector('#pf-form').addEventListener('submit', (event) => { event.preventDefault(); this.run(false); });
+    this.root.addEventListener('input', (event) => {
+      if (event.target.closest('#pf-form')) { this.syncSlider(event.target); if (event.target.id === 'pf-limit-volatility' || event.target.dataset.pfSliderFor === 'pf-limit-volatility') { const value=this.root.querySelector('#pf-limit-volatility').value; this.config.volatilityLimitPct=value===''?NaN:Number(value); } this.readForm(); this.invalidate(); this.renderTotals(); }
+    });
+    this.root.addEventListener('change', (event) => {
+      if (event.target.closest('#pf-form')) {
+        this.readForm(); this.invalidate();
+        if(event.target.id==='pf-rebalancing')this.renderForm();
+      }
+    });
+    this.root.addEventListener('click', (event) => {
+      const button = event.target.closest('[data-pf-action]'); if (!button) return;
+      this.action(button.dataset.pfAction, button.dataset.key);
+    });
+    this.root.querySelector('#pf-import-file').addEventListener('change', async (event) => {
+      const file = event.target.files[0]; if (!file) return;
+      try { if (file.size > 200000) throw Error('Datei ist zu groß.'); this.requireStore(); this.saved = this.store.import(this.saved, await file.text());
+        if (this.saved.length >= 5) for (const key of this.results.keys()) if (key.startsWith('preview-')) this.results.delete(key);
+        this.renderLibrary(); this.message('Portfolios importiert. Sie werden vor der Auswertung neu geprüft.'); await this.restore(); }
+      catch (error) { this.message(error.message, 'error'); } finally { event.target.value = ''; }
+    });
+  }
+  requireStore() { if (!this.store || this.storageError) throw Error(this.storageError || 'Lokaler Speicher ist nicht verfügbar. JSON exportieren.'); }
+  message(text, kind = '') { const el = this.root.querySelector('#pf-message'); el.hidden = false; el.textContent = text; el.dataset.kind = kind; }
+  invalidate({ removeActive = true } = {}) {
+    this.setBusy(false);
+    this.root.querySelector('#pf-optimization-result').hidden = true;
+    this.root.querySelector('#pf-message').hidden = true;
+    for (const cancel of this.jobs) cancel(); this.jobs.clear();
+    this.revision++; if (removeActive && this.activeKey) this.results.delete(this.activeKey); this.activeKey = '';
+    if (removeActive && this.config.id) { this.results.delete(this.config.id); this.dirtyIds.add(this.config.id); }
+    this.root.querySelector('#pf-draft-state').textContent = 'Entwurf geändert. Erneut fertigstellen, um Ergebnisse zu sehen.';
+    for (const a of ['save', 'duplicate']) this.root.querySelector(`[data-pf-action="${a}"]`).disabled = true;
+    this.renderLinked(); this.onChange(); void this.refreshVolatilityReference();
+  }
+  readForm() {
+    const get = (key) => this.root.querySelector(`#pf-${key}`).value;
+    Object.assign(this.config, { name: get('name'), description: get('description'), start: this.comparisonStart || this.config.start, end: this.comparisonEnd || this.config.end,
+      amount: 10000, frequency: get('frequency'), rebalancing: get('rebalancing'), threshold: Number(get('threshold')), rollingMonths: Number(get('rollingMonths')), terPct: Number(get('terPct')), financingPct: Number(get('financingPct')) });
+    this.config.objective = get('objective');
+    this.config.optimizationAssets = Array.from(this.root.querySelectorAll('[data-pf-pool]:checked')).map((el) => el.dataset.pfPool);
+    this.config.leverage = 1;
+    this.config.enabledLimits = {alternatives:true,position:true,volatility:true,...this.config.enabledLimits};
+    this.config.assetSettings = {...this.config.assetSettings,...Object.fromEntries(Object.keys(this.config.weights).map((slug) => [slug,{leverage:Number(get('leverage-'+slug)),terPct:Number(get('ter-'+slug))}]))};
+    this.config.limits = Object.fromEntries(['alternatives', 'position', 'volatility'].map((key) => [key, key!=='volatility' && this.root.querySelector(`#pf-limit-${key}`) ? Number(get(`limit-${key}`)) : this.config.limits[key]]));
+    this.root.querySelectorAll('[data-pf-weight]').forEach((el) => { this.config.weights[el.dataset.pfWeight] = el.value === '' ? NaN : Number(el.value); });
+    this.root.querySelectorAll('[data-pf-rule]').forEach((el) => {
+      this.config.rules[el.dataset.pfRule] = { value: el.value === '' ? NaN : Number(el.value), mode: this.config.rules[el.dataset.pfRule]?.mode || 'absolute' };
+    });
+  }
+  syncSlider(input) {
+    if (input.dataset.pfSliderFor) this.root.querySelector(`#${input.dataset.pfSliderFor}`).value = input.value;
+    if (input.dataset.pfNumberSlider) {
+      const range = this.root.querySelector(`[data-pf-slider-for="${input.dataset.pfNumberSlider}"]`);
+      if (range) range.value = input.value;
+    }
+  }
+  leverageEnabled(slug) { return this.enabledLeverage.has(slug) || assetLeverage(this.config,slug) > 1 || assetTer(this.config,slug) > 0; }
+  renderForm() {
+    const c = this.config;
+    for (const key of ['name', 'description', 'frequency', 'rebalancing', 'threshold', 'rollingMonths', 'terPct', 'financingPct']) {
+      const input = this.root.querySelector(`#pf-${key}`); input.value = c[key] ?? (key === 'leverage' ? 1 : 0); this.syncSlider(input);
+    }
+    this.root.querySelector('#pf-weights').innerHTML = Object.entries(c.weights).map(([slug,weight],i) => {
+      const leverageEnabled=this.leverageEnabled(slug);
+      const max = ASSETS[slug][1] && limitEnabled(c,'position') ? c.limits.position / assetLeverage(c,slug) : 100;
+      return `<div class="portfolio-lab__weight-row"><label for="pf-weight-${slug}"><i style="background:${colors[i % colors.length]}"></i>${esc(ASSETS[slug][0])}${ASSETS[slug][1] ? '<small>Alternativ</small>' : ''}</label>
+        <div><input id="pf-weight-${slug}" data-pf-weight="${slug}" data-pf-number-slider="pf-weight-${slug}" type="number" min="0.01" max="${max}" step="0.01" value="${weight}"><span>%</span><button type="button" data-pf-action="remove-asset" data-key="${slug}" aria-label="${esc(ASSETS[slug][0])} entfernen">×</button></div>
+        <input type="range" min="0" max="${max}" step="0.5" value="${weight}" data-pf-slider-for="pf-weight-${slug}" aria-label="Gewicht ${esc(ASSETS[slug][0])} als Schieberegler">
+        <div class="portfolio-lab__position-settings ${leverageEnabled?'is-leveraged':'is-unleveraged'}"><button type="button" class="portfolio-lab__leverage-toggle" data-pf-action="toggle-leverage" data-key="${slug}" aria-pressed="${leverageEnabled}" aria-controls="pf-leverage-label-${slug} pf-leverage-slider-${slug} pf-ter-label-${slug}">${leverageEnabled?'Hebel deaktivieren':'Hebel aktivieren'}</button><label id="pf-leverage-label-${slug}" data-pf-leverage-field ${leverageEnabled?'':'hidden'} for="pf-leverage-${slug}">Hebel <span>×</span><input id="pf-leverage-${slug}" ${leverageEnabled?'':'disabled'} type="number" min="1" max="3" step="0.1" value="${assetLeverage(c,slug)}" data-pf-number-slider="pf-leverage-${slug}" aria-label="Hebel ${esc(ASSETS[slug][0])}"></label>
+          <input id="pf-leverage-slider-${slug}" data-pf-leverage-field ${leverageEnabled?'':'hidden disabled'} type="range" min="1" max="3" step="0.1" value="${assetLeverage(c,slug)}" data-pf-slider-for="pf-leverage-${slug}" aria-label="Hebel ${esc(ASSETS[slug][0])} als Schieberegler">
+          <label id="pf-ter-label-${slug}" data-pf-leverage-field ${leverageEnabled?'':'hidden'} for="pf-ter-${slug}" title="Zusätzliche jährliche Kosten für den Hebel, in Prozent des Werts dieser Position. Werden nur bei aktiviertem Hebel berechnet.">TER <span>% p.a.</span><input id="pf-ter-${slug}" ${leverageEnabled?'':'disabled'} title="Zusätzliche jährliche Kosten für den Hebel, in Prozent des Werts dieser Position. Werden nur bei aktiviertem Hebel berechnet." type="number" min="0" max="5" step="0.01" value="${assetTer(c,slug)}" aria-label="Zusätzliche Hebelkosten (TER) ${esc(ASSETS[slug][0])}"></label></div></div>`;
+    }).join('');
+    this.root.querySelector('#pf-add-asset').innerHTML = Object.entries(ASSETS).filter(([slug]) => !Object.hasOwn(c.weights, slug)).map(([slug, [name]]) => `<option value="${slug}">${esc(name)}</option>`).join('');
+    const baseRules = [
+      ['alternatives',"Maximaler Gesamtanteil alternativer Anlagen",100],['position',"Höchstanteil einer einzelnen alternativen Anlage",100],['volatility','Volatilität p.a.',Math.max(100,this.volatilityInputValue() || 0)],
+    ];
+    this.root.querySelector('#pf-mandatory').innerHTML = baseRules.filter(([key]) => limitEnabled(c,key)).map(([key,label,max]) => `<div class="portfolio-lab__rule"><div class="portfolio-lab__rule-header"><label for="pf-limit-${key}">${label}</label>${ruleInfo(label,BASE_RULE_HELP[key],key)}<button type="button" data-pf-action="remove-base" data-key="${key}" aria-label="Regel entfernen: ${esc(label)}">×</button></div>${slider(`pf-limit-${key}`,label,key==='volatility'?this.volatilityInputValue():c.limits[key],0,max,key==='volatility'?0.01:0.5,'aria-label="'+esc(label)+' Grenzwert"')}</div>`).join('');
+    this.root.querySelector('[data-pf-threshold-field]').hidden = c.rebalancing !== 'threshold';
+    this.root.querySelector('#pf-rules').innerHTML = Object.entries(c.rules).map(([key, rule]) => `<div class="portfolio-lab__rule"><div class="portfolio-lab__rule-header"><label for="pf-rule-${key}" title="${esc(OPTIONAL_RULES[key][1])}">${esc(OPTIONAL_RULES[key][0])}</label>${ruleInfo(OPTIONAL_RULES[key][0],OPTIONAL_RULES[key][1]+(rule.mode==='reference'?" Die Grenze ist ein Prozentsatz der entsprechenden 60/40-Risikokennzahl.":''),key)}<button type="button" data-pf-action="remove-rule" data-key="${key}" aria-label="Regel entfernen">×</button></div>
+      ${slider(`pf-rule-${key}`, OPTIONAL_RULES[key][0], rule.value, OPTIONAL_RULES[key][2], 100, 0.1, `data-pf-rule="${key}" aria-label="Grenzwert in Prozent"`)}</div>`).join('');
+    this.root.querySelector('#pf-add-rule').innerHTML = baseRules.filter(([key]) => !limitEnabled(c,key)).map(([key,label]) => '<option value="base:'+key+'">'+esc(label)+'</option>').join('') + Object.entries(OPTIONAL_RULES).filter(([key]) => !c.rules[key]).map(([key, [name]]) => `<option value="${key}">${esc(name)}</option>`).join('');
+    this.root.querySelector('#pf-objective').innerHTML = Object.entries(OBJECTIVES).map(([key,spec]) => '<option value="'+key+'">'+esc(spec[0])+'</option>').join('');
+    this.root.querySelector('#pf-objective').value = c.objective ?? 'cagr';
+    const pool = c.optimizationAssets ?? Object.keys(ASSETS);
+    this.root.querySelector('#pf-pool').innerHTML = Object.entries(ASSETS).map(([slug,[name]]) => '<label><input type="checkbox" data-pf-pool="'+slug+'" aria-label="Für Optimierung: '+esc(name)+'" '+(pool.includes(slug)?'checked':'')+'><span>'+esc(name)+'</span></label>').join('');
+    this.renderTotals(); void this.refreshVolatilityReference();
+  }
+  renderTotals() {
+    this.root.querySelector('#pf-objective-help').textContent = OBJECTIVES[this.config.objective ?? 'cagr'][1];
+    this.root.querySelector('#pf-pool-count').textContent = '('+(this.config.optimizationAssets ?? Object.keys(ASSETS)).length+')';
+    const entries = Object.entries(this.config.weights); const total = entries.reduce((sum, [, w]) => sum + (Number.isFinite(w) ? w : 0), 0);
+    const alt = entries.reduce((sum, [s, w]) => sum + (ASSETS[s][1] && Number.isFinite(w) ? w * assetLeverage(this.config,s) : 0), 0);
+    const el = this.root.querySelector('#pf-weight-total'); el.textContent = `${number(total)} % verteilt / ${number(alt)} % alternative Marktexposition`;
+    el.dataset.valid = String(Math.abs(total - 100) < 0.00001 && (!limitEnabled(this.config,'alternatives') || alt <= this.config.limits.alternatives));
+    for (const [slug] of entries) {
+      const max = ASSETS[slug][1] && limitEnabled(this.config,'position') ? this.config.limits.position / assetLeverage(this.config,slug) : 100;
+      this.root.querySelector('#pf-weight-'+slug).max = max;
+      this.root.querySelector('[data-pf-slider-for="pf-weight-'+slug+'"]').max = max;
+    }
+    this.root.querySelector('#pf-allocation').innerHTML = entries.map(([slug, w], i) => `<span title="${esc(ASSETS[slug][0])}" style="flex:${Math.max(0, Number.isFinite(w) ? w : 0)};background:${colors[i % colors.length]}"></span>`).join('');
+  }
+  renderLibrary() {
+    this.root.querySelector('#pf-slot-count').textContent = `${this.saved.length} / 5`;
+    this.root.querySelector('#pf-templates').innerHTML = this.templates.map((p, i) => `<button type="button" data-pf-action="template" data-key="${i}"><strong>${esc(p.name)}</strong><span>${i ? 'Aktien / Anleihen / Geldmarkt' : 'Aktien / Anleihen'}</span></button>`).join('');
+    const selected = this.root.querySelector('#pf-saved').value;
+    this.root.querySelector('#pf-saved').innerHTML = '<option value="">Gespeichertes Portfolio wählen</option>' + this.saved.map((p) => `<option value="${esc(p.id)}">${esc(p.name)}</option>`).join('');
+    this.root.querySelector('#pf-saved').value = this.saved.some((p) => p.id === selected) ? selected : '';
+  }
+  action(action, key) {
+    try {
+      if (action === 'toggle-leverage') {
+        this.readForm();
+        if(this.leverageEnabled(key)){
+          this.enabledLeverage.delete(key);
+          this.config.assetSettings[key]={...this.config.assetSettings[key],leverage:1,terPct:0};
+        } else this.enabledLeverage.add(key);
+        this.invalidate();this.renderForm();return;
+      }
+      if (action === 'remove-base') {this.readForm();this.config.enabledLimits[key]=false;this.invalidate();this.renderForm();return;}
+      if (action === 'pool-all' || action === 'pool-editor') {this.readForm();this.config.optimizationAssets=action==='pool-all'?Object.keys(ASSETS):Object.keys(this.config.weights);this.invalidate();this.renderForm();return;}
+      if (action === 'optimize') { this.run(true); return; }
+      if (action === 'template' || action === 'new' || action === 'load') {
+        const selected = this.saved.find((p) => p.id === this.root.querySelector('#pf-saved').value);
+        if (action === 'load' && !selected) throw Error('Zuerst ein gespeichertes Portfolio wählen.');
+        this.invalidate({ removeActive: false }); this.enabledLeverage.clear(); this.config = this.draftConfig(action === 'template' ? this.templates[Number(key)] : action === 'load' ? selected : defaults());
+        this.renderForm(); this.message('Zusammenstellung geladen. Mit „Portfolio fertigstellen“ prüfen und auswerten.'); return;
+      }
+      if (action === 'add-asset') { const s = this.root.querySelector('#pf-add-asset').value; if (s) {this.config.weights[s]=5;if(Array.isArray(this.config.optimizationAssets)&&!this.config.optimizationAssets.includes(s))this.config.optimizationAssets.push(s);} }
+      if (action === 'remove-asset') {delete this.config.weights[key];if(Array.isArray(this.config.optimizationAssets))this.config.optimizationAssets=this.config.optimizationAssets.filter((s)=>s!==key);}
+      if (action === 'add-rule') { const r = this.root.querySelector('#pf-add-rule').value; if (r.startsWith('base:')) {this.readForm();this.config.enabledLimits[r.slice(5)]=true;this.invalidate();this.renderForm();return;} if (r) this.config.rules[r] = { mode: r==='shortfall' ? 'reference' : 'absolute', value: { drawdown:25, contribution:80, tracking:5, turnover:20 }[r] || 100 }; }
+      if (action === 'remove-rule') delete this.config.rules[key];
+      if (['add-asset', 'remove-asset', 'add-rule', 'remove-rule'].includes(action)) { this.invalidate(); this.renderForm(); return; }
+      if (action === 'save' || action === 'duplicate') {
+        this.requireStore(); const entry = this.results.get(this.activeKey); if (!entry || !entry.result.valid) throw Error('Zuerst ein gültiges Portfolio fertigstellen.');
+        const saved = this.store.save(this.saved, this.config, { duplicate: action === 'duplicate' }); this.saved = saved.portfolios;
+        if (action === 'save' || !this.config.id) { this.results.delete(this.activeKey); this.activeKey = saved.item.id; this.config = saved.item; this.results.set(this.activeKey, { ...entry, config: copy(saved.item) }); }
+        else this.results.set(saved.item.id, { ...entry, config: copy(saved.item) });
+        this.renderLibrary(); this.renderLinked(); this.onChange(); this.message('Portfolio gespeichert.'); return;
+      }
+      if (action === 'delete') {
+        this.requireStore(); const id = this.root.querySelector('#pf-saved').value; const p = this.saved.find((s) => s.id === id);
+        if (!p) throw Error('Zuerst ein gespeichertes Portfolio wählen.');
+        if (!window.confirm(`„${p.name}“ löschen?`)) return;
+        this.saved = this.store.remove(this.saved, id); this.results.delete(id);
+        if (this.config.id === id) { this.config.id = ''; this.activeKey = ''; for (const a of ['save', 'duplicate']) this.root.querySelector(`[data-pf-action="${a}"]`).disabled = true; }
+        this.renderLibrary(); this.renderLinked(); this.onChange(); return;
+      }
+      if (action === 'export') {
+        const text = exportPortfolios(this.saved.length ? this.saved : [this.config]);
+        const url = URL.createObjectURL(new Blob([text], { type: 'application/json' })); const a = document.createElement('a');
+        a.href = url; a.download = 'meine-portfolios.json'; a.click(); setTimeout(() => URL.revokeObjectURL(url), 1000); return;
+      }
+      if (action === 'import') this.root.querySelector('#pf-import-file').click();
+    } catch (error) { this.message(error.message, 'error'); }
+  }
+  volatilityInputValue() {
+    const target = volatilityLimit(this.config, this.volatilityReferencePct);
+    return Number.isFinite(target) && (this.config.volatilityLimitPct != null || this.volatilityReferencePct != null) ? Math.round(target * 100) / 100 : 0;
+  }
+  renderVolatilityControl() {
+    const input=this.root.querySelector('#pf-limit-volatility'); if (!input) return;
+    const range=this.root.querySelector('[data-pf-slider-for="pf-limit-volatility"]');
+    const ready=Number.isFinite(this.volatilityReferencePct) || this.config.volatilityLimitPct != null;
+    const value=this.volatilityInputValue(); const max=Math.max(100,value);
+    for (const control of [input,range]) { control.disabled=!ready; control.max=String(Math.min(1000,max)); control.step='0.01'; if(document.activeElement!==control)control.value=String(value); }
+    input.closest('.portfolio-lab__slider').classList.add('portfolio-lab__volatility-slider');
+    input.closest('.portfolio-lab__slider').querySelector('span').textContent='% p.a.';
+    const info=this.root.querySelector('[data-rule-info="volatility"]');
+    const text=BASE_RULE_HELP.volatility+(Number.isFinite(this.volatilityReferencePct)?' 60/40: '+pct(this.volatilityReferencePct)+' p.a.':'');
+    if(info){info.setAttribute('aria-label',text);info.querySelector('[role="tooltip"]').textContent=text;}
+    input.title=this.volatilityReferenceError || '';
+    if(!ready)input.value='';
+  }
+  async refreshVolatilityReference(forOptimization=Boolean(this.config.dataSnapshot?.optimization), options={}) {
+    if(this.deferInitialReference)return;
+    if(!limitEnabled(this.config,'volatility'))return true;
+    const config=copy(this.config);
+    const key=JSON.stringify([config.start,config.end,config.frequency,Object.keys(config.weights).sort(),forOptimization?config.optimizationAssets:null]);
+    if(key===this.volatilityReferenceKey){this.renderVolatilityControl();return this.volatilityReferencePromise;}
+    const revision=++this.volatilityReferenceRevision; this.volatilityReferenceKey=key;
+    this.volatilityReferencePct=null;this.volatilityReferenceError='';this.renderVolatilityControl();
+    const pending=(async()=>{
+      try {
+        const market=await this.marketFor(config,forOptimization,options);const value=referenceVolatility(market,config);
+        if(revision!==this.volatilityReferenceRevision)return null;
+        if(!Number.isFinite(value))throw Error("Referenzvolatilität ist für diese Daten nicht berechenbar.");
+        this.volatilityReferencePct=value;this.volatilityReferenceFrequency=market.frequency;this.renderVolatilityControl();return market;
+      } catch(error){if(revision===this.volatilityReferenceRevision){this.volatilityReferenceKey=null;this.volatilityReferenceError=error.message;this.renderVolatilityControl();}return false;}
+    })();
+    this.volatilityReferencePromise=pending;return pending;
+  }
+  async marketFor(config, forOptimization = Boolean(config.dataSnapshot?.optimization), options={}) {
+    if (forOptimization) config = optimizationConfig(config);
+    const slugs = [...new Set([...Object.keys(config.weights), ...Object.keys(REFERENCE)])];
+    const firstDates = slugs.map((s) => this.assets.get(s)?.firstDate).filter(Boolean);
+    const start = [config.start, ...firstDates].sort().at(-1);
+    if (start >= config.end) throw Error('Für diese Anlageklassen gibt es keinen gemeinsamen Zeitraum.');
+    const key = JSON.stringify([slugs.slice().sort(), start, config.end]);
+    if (!this.cache.has(key)) this.cache.set(key, Promise.all(slugs.map(async (slug) => {
+      const payload = await this.api.series({ assets: [slug], start, end: config.end, amount: 10000,
+        includeRentalCashflow: false, includeTer: false, includeTaxes: false, inflation: 'none' }, undefined, options);
+      const s = payload.series.find((s) => s.slug === slug); if (!s) throw Error(payload.warnings?.[0]?.message || `Keine Daten für ${ASSETS[slug][0]}.`); return s;
+    })).catch((error) => { this.cache.delete(key); throw error; }));
+    const series = await this.cache.get(key); const market = prepareMarket(series, { ...config, start });
+    market.adjustments = series.filter((s) => s.dividendAdjustment?.applied).map((s) => s.displayName);
+    return market;
+  }
+  async run(model) {
+    this.readForm(); this.invalidate(); if(this.config.volatilityLimitPct != null && !Number.isFinite(this.config.volatilityLimitPct)){this.message('Gültige Volatilitätsgrenze in % pro Jahr eingeben.','error');return;} const revision = this.revision; let config = copy(this.config);
+    if (model) {try {config=optimizationConfig(config);} catch(error) {this.message(error.message,'error');return;}}
+    if (!this.saved.some((p) => p.id === config.id) && this.saved.length >= 5) { this.message('Alle fünf Portfolio-Plätze sind belegt. Ein gespeichertes Portfolio zum Bearbeiten laden oder zuerst einen Platz freigeben.', 'error'); return; }
+    const errors = validateConfig(config, { allocation: !model }); if (errors.length) { this.message(errors.join(' '), 'error'); return; }
+    this.setBusy(true); this.message(model ? 'Zulässige historische Allokationen werden gesucht …' : 'Kursreihen laden und aktive Regeln prüfen …');
+    try {
+      await this.refreshVolatilityReference(model);
+      const market = await this.marketFor(config, model); await pause();
+      const found = await this.compute(model ? 'optimize' : 'evaluate', market, config);
+      if (revision !== this.revision) return;
+      if (!found.result.valid) throw Error(found.result.checks.filter((c) => !c.passed).map((c) => `${c.label}: ${pct(c.value)} / Grenze ${pct(c.limit)}${c.available ? '' : ' (zu wenig Daten)'}`).join('. '));
+      this.config = copy(found.config); this.activeKey = this.config.id || `preview-${++this.sequence}`;
+      this.config.dataSnapshot = { calculatedAt: new Date().toISOString(), method: 'v1.3m', firstDate: market.calendar?.dates[0] || market.dates[0],
+        lastDate: market.calendar?.dates.at(-1) || market.dataEnd, riskFirstDate:market.dates[0], riskLastDate:market.dates.at(-1), frequency: market.frequency, sourceDates: market.calendar?.sourceDates || market.sourceDates, dividendModels: market.adjustments || [], optimization: found.optimization || null };
+      this.dirtyIds.delete(this.config.id);
+      // Unsaved drafts share one temporary result; five saved portfolios remain independent.
+      for (const key of this.results.keys()) if (key.startsWith('preview-')) this.results.delete(key);
+      this.results.set(this.activeKey, { config: copy(this.config), market, result: found.result, model,
+        diagnostics: diagnostics(market, this.config, found.result) });
+      this.renderForm(); this.renderLinked(); this.onChange();
+      if (model) {
+        const summary = this.root.querySelector('#pf-optimization-result'); summary.hidden = false;
+        summary.innerHTML = `<h4>Gefundene Gewichtung</h4><p>${esc(OBJECTIVES[this.config.objective ?? 'cagr'][0])}: <strong>${number(found.optimization.value,4)}${['sharpe','calmar'].includes(this.config.objective) ? '' : ' %'}</strong></p><ul>${Object.entries(this.config.weights).map(([slug,w]) => `<li><span>${esc(ASSETS[slug][0])}</span><strong title="${esc(w)} %">${pct(w)}</strong></li>`).join('')}</ul>`;
+      }
+      this.root.querySelector('#pf-draft-state').textContent = 'Fertig geprüft. In den Einzelverläufen sichtbar und im Gesamtvergleich unter Einstellungen auswählbar.';
+      for (const a of ['save', 'duplicate']) this.root.querySelector(`[data-pf-action="${a}"]`).disabled = false;
+      this.message(model ? `Beste gefundene Allokation: ${OBJECTIVES[this.config.objective ?? 'cagr'][0]}. Zielwert ${number(found.optimization.value,4)}${['sharpe','calmar'].includes(this.config.objective) ? '' : ' %'}. ${found.optimization.feasible} zulässige von ${found.optimization.candidates} geprüften Kandidaten. Alle eingeschalteten Regeln erfüllt. Historische Optimierung, keine Zukunftsprognose.` : 'Portfolio fertig. Alle eingeschalteten Regeln sind im gewählten historischen Zeitraum erfüllt.', 'success');
+    } catch (error) { if (revision === this.revision) this.message(error.message, 'error'); }
+    finally { if(revision === this.revision) this.setBusy(false); }
+  }
+  setBusy(busy) {
+    this.root.setAttribute('aria-busy', String(busy));
+    this.root.querySelectorAll('button[type="submit"], [data-pf-action="optimize"]').forEach((b) => { b.disabled = busy; });
+  }
+  compute(type, market, config) {
+    const settings=this.getTaxSettings();
+    const taxSettings=Object.fromEntries(Object.keys(TAX_DEFAULTS).map(key=>[key,settings[key]??TAX_DEFAULTS[key]]));
+    if (!globalThis.Worker) return Promise.resolve(type === 'optimize' ? optimize(market, config) : { config, result: evaluate(market, config) });
+    return new Promise((resolve, reject) => {
+      const worker = new Worker(new URL('./portfolio-worker.js?v=20261028-v13y', import.meta.url), { type: 'module' });
+      const done = (error, result) => { worker.terminate(); this.jobs.delete(cancel); if (error) reject(error); else resolve(result); };
+      const cancel = () => done(new Error('Berechnung nach einer Änderung des Entwurfs abgebrochen.'));
+      this.jobs.add(cancel);
+      worker.onmessage = ({ data }) => done(data.success ? null : new Error(data.message), data.result);
+      worker.onerror = () => done(new Error('Portfolioberechnung konnte nicht gestartet werden. Seite neu laden.'));
+      worker.postMessage({ type, market, config, taxSettings });
+    });
+  }
+  async restore(options={}) {
+    const failed = []; const revision = this.revision;
+    for (const saved of this.saved) {
+      this.singleErrors.delete(saved.id);
+      const c = {...saved,amount:10000,start:this.comparisonStart || saved.start,end:this.comparisonEnd || saved.end};
+      try { const market = await this.marketFor(c, undefined, options); if(revision!==this.revision)return false;
+        await nextPaint();
+        const found=await this.compute('restore',market,c);const result=found.result;
+        if(revision!==this.revision)return false;
+        if (!result.valid) throw Error('Regeln mit aktuellem Datenstand nicht erfüllt.');
+        if (!this.dirtyIds.has(c.id)) {
+          const entry={config:copy(c),market,result,diagnostics:found.diagnostics||diagnostics(market,c,result)};
+          this.results.set(c.id,entry);
+          if(found.taxView)this.taxViewCache.set(entry,{key:found.taxKey,entry:{...entry,...found.taxView}});
+          if(found.taxError){this.taxViewCache.set(entry,{key:found.taxKey,error:found.taxError});failed.push(c.name+': '+found.taxError);}
+          this.renderLinked();this.onChange();await nextPaint();
+        }
+      } catch (error) {if(revision!==this.revision)return; this.singleErrors.set(c.id,error.message);failed.push(`${c.name}: ${error.message}`);}
+    }
+    this.renderLinked(); this.onChange();
+    if (failed.length) this.message(`Gespeicherte Konfigurationen bleiben erhalten. Keine Auswertung für: ${failed.join(' / ')}`, 'error');
+    return failed.length===0;
+  }
+  comparisonOptions() {
+    const options = [...this.results.entries()].map(([key,e],i) => ({key,name:e.config.name,color:colors[i % colors.length]}));
+    if (options.length) options.push({key:'reference',name:"60/40-Referenz",color:'#94a3b8'});
+    return options;
+  }
+  selectAllComparisons(selected) {
+    this.comparisonSelection = new Set(selected ? this.comparisonOptions().map((option) => option.key) : []);
+    this.renderComparisonOptions();
+  }
+  renderComparisonOptions() {
+    const output = document.querySelector('#comparison-portfolios'); if (!output) return;
+    const focused = output.contains(document.activeElement) ? document.activeElement.dataset.portfolioOption : null;
+    const options = this.comparisonOptions();
+    const html = options.map(({key,name,color}) => '<label><input type="checkbox" data-portfolio-option="'+esc(key)+'" '+(this.comparisonSelection.has(key)?'checked':'')+'><span><i class="asset-backtester__line-key" style="background:'+color+'"></i>'+esc(name)+'</span></label>').join('') || '<small>Portfolio fertigstellen oder laden, um es hier auszuwählen.</small>';
+    if (output.innerHTML !== html) {
+      output.innerHTML = html;
+      if (focused) [...output.querySelectorAll('[data-portfolio-option]')].find((input) => input.dataset.portfolioOption === focused)?.focus();
+    }
+  }
+  taxEntries() {
+    const settings=this.getTaxSettings(),key=portfolioTaxKey(settings);this.taxErrors.clear();
+    if(!settings.taxesEnabled)return [...this.results.entries()];
+    const entries=[];
+    for(const [id,entry] of this.results){
+      try {
+        let cached=this.taxViewCache.get(entry);
+        if(cached?.key===key && cached.error)throw Error(cached.error);
+        if(cached?.key!==key){
+          const result=simulatePortfolioTaxes(entry.market,entry.config,settings,entry.result);
+          const referenceConfig={...entry.config,weights:REFERENCE,assetSettings:{},leverage:1,terPct:0,financingPct:0,rebalancing:'quarterly',rules:{}};
+          if(entry.result.reference)result.reference=simulatePortfolioTaxes(entry.market,referenceConfig,settings,entry.result.reference);
+          cached={key,entry:{...entry,result,diagnostics:diagnostics(entry.market,entry.config,result)}};this.taxViewCache.set(entry,cached);
+        }
+        entries.push([id,cached.entry]);
+      }catch(error){this.taxErrors.set(id,error.message);}
+    }
+    return entries;
+  }
+  comparisonSeries(range) {
+    return buildPortfolioComparison(this.taxEntries(), range, 10000).filter((series) => this.comparisonSelection.has(series.slug.slice('portfolio-'.length)));
+  }
+  summaryPeriod(entry,period){
+    const end=this.getSummaryEnd();
+    const result=end?{...entry.result,points:entry.result.points.filter(p=>p.date<=end)}:entry.result;
+    return result.points.length?portfolioPeriod(result,entry.market.frequency,period):null;
+  }
+  sortLinkedTables(){
+    sortMetricRows(document.querySelector('#metrics-table tbody'),this.getRanking());
+    sortMetricRows(document.querySelector('#risk-metrics-table tbody'),this.getRanking());
+    const summary=this.getSummarySort() || {period:'1Y',direction:'desc'};sortSummaryTable(document.querySelector('#summary-table tbody'),summary.period,summary.direction);
+  }
+  renderLinked() {
+    this.singleViews ??= new PortfolioSingles(document.querySelector('#portfolio-single-charts'),'de');
+    const taxEntries=this.taxEntries(),errors=new Map([...this.singleErrors,...this.taxErrors]);
+    this.singleViews.render(portfolioSingleRecords(this.saved,new Map(taxEntries),errors));
+    let status=this.root.querySelector('#pf-tax-status');if(!status){status=document.createElement('p');status.id='pf-tax-status';status.className='portfolio-lab__hint';this.root.querySelector('h2').after(status);}
+    status.hidden=!this.getTaxSettings().taxesEnabled;status.textContent=this.taxErrors.size?[...this.taxErrors.values()].join(' / '):"Portfolioansicht nach Steuern aktiv: FIFO, gemeinsamer jährlicher Pauschbetrag und Verluste, tatsächliche Rebalancing-Steuer und hypothetischer Verkauf je Charttag. Allokationsregeln und Optimierung werden vor persönlichen Steuern geprüft.";
+    this.renderComparisonOptions();
+    document.querySelectorAll('[data-portfolio-row]').forEach((el) => el.remove());
+    const entries = taxEntries.filter(([key]) => this.comparisonSelection.has(key)); this.riskOutput.hidden = !entries.length;
+    if (!entries.length) {this.sortLinkedTables(); this.chart?.destroy(); this.drawdownChart?.destroy(); this.chart = null; this.drawdownChart = null; this.riskOutput.replaceChildren(); return; }
+    const summaryEnd=this.getSummaryEnd();
+    const periods = ['1W', '1M', '6M', '1Y', '3Y', '5Y', '10Y'];
+    entries.forEach(([key, e], index) => {
+      const name = esc(e.config.name); const m = e.result.metrics; const frequency = labels[e.market.frequency];
+      const row = document.createElement('tr');row.dataset.summaryRank=JSON.stringify({}); row.dataset.portfolioRow = key; row.className = 'portfolio-lab__table-row';
+      row.innerHTML = `<th scope="row"><span style="color:${colors[index % colors.length]}">◈</span> ${name}<small>Portfolio / EUR / bis ${summaryEnd || e.result.metrics.lastRawObservationDate}</small></th>`;
+      for (const period of periods) {
+        const comparison = this.summaryPeriod(this.results.get(key)||e,period);
+        const value = comparison?.factor ?? null;
+        const returns=JSON.parse(row.dataset.summaryRank);returns[period]=value===null?null:(value-1)*100;row.dataset.summaryRank=JSON.stringify(returns);
+        const cell = row.insertCell(); cell.title = comparison ? `${comparison.start} bis ${comparison.end}; tatsächliche Portfolioentwicklung in EUR` : 'Keine ausreichende gemeinsame Historie auf diesem Raster.';
+        cell.innerHTML = value !== null ? `<span class="asset-backtester__period-return ${(value >= 1) ? 'is-positive' : 'is-negative'}">${pct((value - 1) * 100)}</span><span class="asset-backtester__period-value">${eur(value * 10000)} aus 10.000 EUR</span>` : '<span class="asset-backtester__period-return">–</span><span class="asset-backtester__period-value">Nicht verfügbar</span>';
+      }
+      document.querySelector('#summary-table tbody').append(row);
+      const metricRow = document.createElement('tr'); metricRow.dataset.rankMetrics=JSON.stringify(m);metricRow.dataset.portfolioRow = key; metricRow.className = 'portfolio-lab__table-row';
+      metricRow.innerHTML = `<th scope="row">◈ ${name}<small>Portfolio / EUR</small></th><td><strong>${eur(m.finalValue)}</strong></td><td>${eur(m.absoluteReturn)}</td><td>${pct(m.totalReturnPct)}</td><td>${pct(m.cagrPct)}</td>${document.querySelector('[data-tax-column]:not([hidden])') ? `<td>${eur(m.taxAmount??0)}</td>` : ''}<td class="is-negative">${pct(m.maxDrawdownPct)}</td><td>${m.lastRawObservationDate || e.market.dataEnd}</td>`;
+      document.querySelector('#metrics-table tbody').append(metricRow);
+      const risk = document.createElement('tr'); risk.dataset.rankMetrics=JSON.stringify(m);risk.dataset.portfolioRow = key; risk.className = 'portfolio-lab__table-row';
+      risk.innerHTML = `<th scope="row">◈ ${name}<small>${frequency}renditen / EUR</small></th><td>${pct(m.annualizedVolatilityPct)}</td><td>${number(m.sharpeRatio)}</td><td>${number(m.calmarRatio)}</td><td>${pct(m.bestDayPct)}<small>${m.bestDayDate}</small></td><td>${pct(m.worstDayPct)}<small>${m.worstDayDate}</small></td><td>${pct(m.positiveDaysPct)}</td><td>${m.observedReturnCount}<small>${frequency}änderungen</small></td>`;
+      document.querySelector('#risk-metrics-table tbody').append(risk);
+    });
+    this.sortLinkedTables();
+    this.chart?.destroy(); this.drawdownChart?.destroy(); this.chart = null; this.drawdownChart = null;
+    this.riskOutput.innerHTML = `<div class="portfolio-lab__result-heading"><div><span class="portfolio-lab__step">PORTFOLIOTESTS</span><h3>Risiken und Verteilung</h3></div><span>Nominal / EUR</span></div><div class="portfolio-lab__chart"><canvas id="pf-drawdown-chart" role="img" aria-label="Drawdown-Verläufe der fertigen Portfolios"></canvas></div><div class="portfolio-lab__result-grid">${entries.map(([key, e], i) => this.resultCard(key, e, i)).join('')}</div>`;
+    if (window.Chart) {
+      const dates = [...new Set(entries.flatMap(([, e]) => e.result.points.map((p) => p.date)))].sort();
+      this.drawdownChart = new window.Chart(this.riskOutput.querySelector('canvas'), { type: 'line', data: { labels: dates,
+        datasets: entries.map(([, e], i) => { const byDate = new Map(e.result.points.map((p) => [p.date, p.drawdownPct]));
+          return { label: e.config.name, data: dates.map((d) => byDate.get(d) ?? null), borderColor: colors[i % colors.length], pointRadius: 0, borderWidth: 2, spanGaps: true }; }) },
+        options: { responsive: true, maintainAspectRatio: false, animation: false, interaction: { mode: 'index', intersect: false },
+          scales: { x: { ticks: { maxTicksLimit: 7 }, grid: { display: false } }, y: { max: 0, ticks: { callback: (v) => pct(v) } } },
+          plugins: { legend: { position: 'bottom' }, tooltip: { callbacks: { label: (c) => `${c.dataset.label}: ${pct(c.raw)}` } } } } });
+
+    }
+  }
+  resultCard(key, e, i) {
+    const d = e.diagnostics; const lastRolling = d.rolling.at(-1); const optimization = e.config.dataSnapshot?.optimization;
+    return `<article class="portfolio-lab__result-card"><div class="portfolio-lab__result-title"><h4 style="color:${colors[i % colors.length]}">${esc(e.config.name)}</h4><span>${e.result.taxAdjustment?.applied?'Regeln vor Steuern geprüft':'Geprüft'}</span></div>
+      ${optimization ? `<p class="portfolio-lab__objective-result">Optimierungsziel: ${esc(OBJECTIVES[e.config.objective ?? 'cagr'][0])}. Aktueller Zielwert: ${number(objectiveValue(e.result,e.config.objective ?? 'cagr'),4)}${['sharpe','calmar'].includes(e.config.objective) ? '' : ' %'}</p>` : ''}
+      <p>${Object.keys(e.config.weights).map((slug) => `${esc(ASSETS[slug][0])}: ${number(assetLeverage(e.config,slug))}× / TER ${pct(assetTer(e.config,slug))}`).join('; ')}. Zusätzliche Portfolio-TER ${pct(e.config.terPct ?? 0)} p.a.; Finanzierungszins ${pct(e.config.financingPct ?? 0)} p.a.</p>
+      <p>${e.result.points[0].date} bis ${e.result.points.at(-1).date} / tägliche Bewertung</p><p class="portfolio-lab__hint">Risikoraster: ${labels[e.market.frequency]}renditen / ${e.result.metrics.observedReturnCount} Beobachtungen / Letzter Kursstand: ${e.result.metrics.lastRawObservationDate}</p>
+      <dl><div><dt>Expected Shortfall 95 %</dt><dd>${pct(e.result.metrics.expectedShortfallPct)}</dd></div><div><dt>Tracking Error p.a.</dt><dd>${pct(e.result.trackingErrorPct)}</dd></div></dl>
+      <details><summary>Regeln und Risikobeiträge</summary><ul>${e.result.checks.map((c) => `<li>${esc(c.label)}: ${c.enabled === false ? 'Ausgeschaltet' : `${pct(c.value)} ≤ ${pct(c.limit)}`}</li>`).join('')}${Object.entries(e.result.riskContributions).map(([slug, v]) => `<li>${esc(ASSETS[slug][0])}: ${pct(v)} Risikobeitrag</li>`).join('')}</ul><p>Realisierte Varianzbeiträge einschließlich Gewichtungsdrift. Negative Beiträge sind möglich.</p></details>
+      <details><summary>Stresstests und rollierende Risiken</summary><ul>${d.stresses.map((s) => `<li>${esc(s.name)}: ${s.available ? `${pct(s.returnPct)} / 60/40: ${pct(s.referencePct)}` : 'Keine vollständige gemeinsame Historie'}</li>`).join('')}</ul><p>${lastRolling ? `Rollierendes Fenster ca. ${e.config.rollingMonths} Monate. Letzte Volatilität: ${pct(lastRolling.volatility)} / 60/40 ${pct(lastRolling.reference)}. ${d.rolling.filter((r) => r.volatility > r.reference + 1e-6).length} von ${d.rolling.length} Fenstern über der Referenz.` : 'Zu wenig Daten für rollierende Auswertung.'}</p>
+      <p>${d.rebalances.length} Umschichtungen / maximal ${pct(Math.max(0, ...d.rebalances.map((r) => r.turnoverPct)))} Turnover / ${d.breaches.length} Perioden mit marktbedingter Quotenüberschreitung vor Rebalancing.</p></details>
+      <details><summary>Gewichte und Umschichtungen im Verlauf</summary><div class="portfolio-lab__detail-scroll"><table><thead><tr><th>Datum</th>${Object.keys(e.config.weights).map((s) => `<th>${esc(ASSETS[s][0])}</th>`).join('')}<th>Turnover</th></tr></thead><tbody>${e.result.points.filter((p, j) => j === e.result.points.length - 1 || d.rebalances.some((r) => r.date === p.date)).map((p) => `<tr><td>${p.date}</td>${Object.keys(e.config.weights).map((s) => `<td>${pct(p.weights?.[s])}</td>`).join('')}<td>${pct(d.rebalances.find((r) => r.date === p.date)?.turnoverPct ?? 0)}</td></tr>`).join('')}</tbody></table></div><p>Gewichte nach Kursbewegung, vor der jeweiligen Umschichtung. Erholungsphasen sind im Drawdown-Verlauf bis zur Rückkehr auf 0 % sichtbar.</p></details>
+      <details><summary>${labels[e.market.frequency]}verteilung</summary><div class="portfolio-lab__histogram" role="img" aria-label="Häufigkeit der Periodenrenditen">${d.histogram.map((n, j) => `<div><span style="height:${Math.max(2, n / Math.max(...d.histogram) * 75)}px;background:${j < 3 ? '#f87171' : '#6ee7b7'}"></span><b>${n}</b><small>${['< −3', '−3…−1', '−1…0', '0…1', '1…3', '3…5', '≥ 5'][j]} %</small></div>`).join('')}</div></details>
+      <p class="portfolio-lab__hint">${e.market.adjustments?.length ? `Ausschüttungsmodelle der API: ${esc(e.market.adjustments.join(', '))}. ` : ''}${e.model ? 'Auf dem gesamten gewählten Zeitraum modelliert. ' : ''}Risikolimits sind historische Prüfungen.</p>
+</article>`;
+  }
+}

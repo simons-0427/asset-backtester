@@ -1,0 +1,1202 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Assetklassen-Backtester | Projekt von Simon Stark</title>
+  <link rel="icon" type="image/svg+xml" href="../images/favicons/favicon-1g-dotgrid.svg">
+  <link rel="alternate icon" type="image/png" href="../images/favicons/favicon-1g-dotgrid-32.png">
+  <meta name="robots" content="index, follow">
+  <meta name="description" content="Projektdokumentation des Assetklassen-Backtesters: Marktübersicht, Gesamtvergleich, Dividenden, Mietcashflow sowie zuschaltbare Inflation, TER und Steuern.">
+  <link rel="canonical" href="https://smstark-projekt.de/projekte/backtester">
+  <script type="application/ld+json">
+  {
+      "@context":  "https://schema.org",
+      "@type":  "WebPage",
+      "@id":  "https://smstark-projekt.de/projekte/backtester#webpage",
+      "name":  "Assetklassen-Backtester | Projekt von Simon Stark",
+      "url":  "https://smstark-projekt.de/projekte/backtester",
+      "description":  "Projektdokumentation des Assetklassen-Backtesters mit Marktübersicht, Gesamtvergleich, Dividenden, Mietcashflow sowie zuschaltbarer Inflation, TER und Steuerberechnung.",
+      "author":  {
+                     "@type":  "Person",
+                     "name":  "Simon Stark",
+                     "url":  "https://smstark-projekt.de/"
+                 },
+      "isPartOf":  {
+                       "@type":  "WebSite",
+                       "url":  "https://smstark-projekt.de/",
+                        "name":  "Simon Stark"
+                   }
+  }
+  </script>
+  <meta property="og:type" content="website">
+  <meta property="og:locale" content="de_DE">
+  <meta property="og:url" content="https://smstark-projekt.de/projekte/backtester">
+  <meta property="og:title" content="Assetklassen-Backtester | Simon Stark">
+  <meta property="og:description" content="Aktien, Bitcoin, Gold, Immobilien, Anleihen, Rohstoffe und Geldmarkt vergleichen – nominal, real und auf Wunsch nach TER und Steuern.">
+  <meta property="og:image" content="https://smstark-projekt.de/images/og-backtester.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="Vorschau des Assetklassen-Backtesters mit mehreren Anlageklassen im Gesamtvergleich">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&amp;family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,300&amp;display=swap" rel="stylesheet">
+  <style>
+:root {
+  --bg: #0c0c0f;
+  --surface: #13131a;
+  --card: #16161f;
+  --card-hover: #191923;
+  --border: #1e1e2e;
+  --border-strong: #2b2b40;
+  --accent: #6ee7b7;
+  --accent-2: #818cf8;
+  --gold: #f6c85f;
+  --text: #e2e8f0;
+  --muted: #94a3b8;
+  --quiet: #64748b;
+  --nav-height: 68px;
+  --article-width: 760px;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html { scroll-behavior: smooth; max-width: 100%; overflow-x: hidden; }
+
+body {
+  min-height: 100vh;
+  background: var(--bg);
+  color: var(--text);
+  font-family: "DM Sans", sans-serif;
+  line-height: 1.75;
+}
+
+a {
+  color: inherit;
+}
+
+button,
+a {
+  -webkit-tap-highlight-color: transparent;
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 4px;
+}
+
+.main-nav {
+  position: fixed;
+  inset: 0 0 auto;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: var(--nav-height);
+  padding: 0 clamp(1.5rem, 5vw, 4rem);
+  border-bottom: 1px solid var(--border);
+  background: rgba(12, 12, 15, 0.88);
+  backdrop-filter: blur(18px);
+}
+
+.nav-logo,
+.footer-logo {
+  color: var(--text);
+  font-family: "Syne", sans-serif;
+  font-size: 1.3rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  text-decoration: none;
+}
+
+.nav-logo {
+  position: absolute;
+  left: clamp(1.5rem, 5vw, 4rem);
+}
+
+.nav-logo span,
+.footer-logo span {
+  color: var(--accent);
+}
+
+.nav-links {
+  display: flex;
+  gap: 2.2rem;
+  align-items: center;
+  list-style: none;
+}
+
+.nav-links a {
+  color: var(--text);
+  font-size: 0.875rem;
+  font-weight: 500;
+  letter-spacing: 0.03em;
+  text-decoration: none;
+  transition: color 160ms ease;
+}
+
+.nav-links a:hover,
+.nav-links a.active {
+  color: var(--accent);
+}
+
+.nav-github {
+  position: absolute;
+  right: clamp(1.5rem, 5vw, 4rem);
+  display: inline-flex;
+  gap: 0.5rem;
+  align-items: center;
+  padding: 0.4rem 0.9rem;
+  border: 1px solid var(--text);
+  border-radius: 8px;
+  color: var(--text);
+  font-size: 0.82rem;
+  font-weight: 500;
+  text-decoration: none;
+  transition: border-color 160ms ease, color 160ms ease;
+}
+
+.nav-github:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.nav-github svg {
+  width: 15px;
+  height: 15px;
+  fill: currentColor;
+}
+
+.nav-toggle {
+  position: absolute;
+  right: 1.5rem;
+  z-index: 101;
+  display: none;
+  width: 40px;
+  height: 40px;
+  flex-direction: column;
+  gap: 5px;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: transparent;
+  cursor: pointer;
+}
+
+.nav-toggle span {
+  display: block;
+  width: 18px;
+  height: 2px;
+  border-radius: 2px;
+  background: var(--text);
+  transition: transform 200ms ease, opacity 160ms ease;
+}
+
+.nav-toggle.open span:nth-child(1) {
+  transform: translateY(7px) rotate(45deg);
+}
+
+.nav-toggle.open span:nth-child(2) {
+  opacity: 0;
+}
+
+.nav-toggle.open span:nth-child(3) {
+  transform: translateY(-7px) rotate(-45deg);
+}
+
+.mobile-menu {
+  position: fixed;
+  top: var(--nav-height);
+  left: 0;
+  right: 0;
+  z-index: 102;
+  display: none;
+  max-height: 0;
+  overflow: hidden;
+  border-bottom: 1px solid var(--border);
+  background: rgba(12, 12, 15, 0.98);
+  backdrop-filter: blur(18px);
+  transition: max-height 220ms ease;
+}
+
+.mobile-menu.open {
+  max-height: calc(100vh - var(--nav-height));
+  overflow-y: auto;
+}
+
+.mobile-menu ul {
+  padding: 0.4rem 1.5rem 1.4rem;
+  list-style: none;
+}
+
+.mobile-menu li + li {
+  border-top: 1px solid var(--border);
+}
+
+.mobile-menu a {
+  display: block;
+  padding: 0.95rem 0.2rem;
+  color: var(--text);
+  font-size: 1rem;
+  font-weight: 500;
+  text-decoration: none;
+}
+
+.mobile-menu a.active,
+.mobile-menu a:hover,
+.mobile-menu .mobile-github {
+  color: var(--accent);
+}
+
+.hero {
+  position: relative;
+  margin-top: var(--nav-height);
+  padding: clamp(4rem, 8vw, 6rem) clamp(1.5rem, 8vw, 8rem) clamp(3.5rem, 7vw, 5rem);
+  overflow: hidden;
+  border-bottom: 1px solid var(--border);
+}
+
+.hero::before {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 55% 70% at 82% 35%, rgba(110, 231, 183, 0.08), transparent 66%),
+    radial-gradient(ellipse 40% 65% at 4% 82%, rgba(129, 140, 248, 0.07), transparent 62%);
+  content: "";
+  pointer-events: none;
+}
+
+.hero-inner {
+  position: relative;
+  max-width: 820px;
+}
+
+.breadcrumb {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  margin-bottom: 1.4rem;
+  color: var(--quiet);
+  font-size: 0.78rem;
+}
+
+.breadcrumb a {
+  color: var(--quiet);
+  text-decoration: none;
+}
+
+.breadcrumb a:hover {
+  color: var(--accent);
+}
+
+.breadcrumb svg {
+  width: 12px;
+  height: 12px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2.5;
+}
+
+.project-tag,
+.section-label {
+  color: var(--accent);
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.17em;
+  text-transform: uppercase;
+}
+
+.project-tag {
+  margin-bottom: 0.9rem;
+}
+
+.hero h1 {
+  margin-bottom: 1.2rem;
+  font-family: "Syne", sans-serif;
+  font-size: clamp(2.6rem, 6vw, 4.8rem);
+  font-weight: 800;
+  letter-spacing: -0.04em;
+  line-height: 1.02;
+}
+
+.hero h1 em {
+  color: var(--accent);
+  font-style: normal;
+}
+
+.hero-desc {
+  max-width: 62ch;
+  margin-bottom: 2rem;
+  color: var(--muted);
+  font-size: clamp(1rem, 2vw, 1.1rem);
+  font-weight: 300;
+  line-height: 1.75;
+}
+
+.meta-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  align-items: center;
+}
+
+.tag {
+  padding: 0.25rem 0.7rem;
+  border-radius: 5px;
+  font-size: 0.72rem;
+  font-weight: 600;
+}
+
+.tag--php {
+  background: rgba(129, 140, 248, 0.13);
+  color: var(--accent-2);
+}
+
+.tag--database {
+  background: rgba(110, 231, 183, 0.12);
+  color: var(--accent);
+}
+
+.tag--data {
+  background: rgba(246, 200, 95, 0.12);
+  color: var(--gold);
+}
+
+.tag--frontend {
+  background: rgba(244, 114, 182, 0.1);
+  color: #f472b6;
+}
+
+.meta-divider {
+  width: 1px;
+  height: 14px;
+  background: var(--border-strong);
+}
+
+.meta-date {
+  display: inline-flex;
+  gap: 0.3rem;
+  align-items: center;
+  color: var(--muted);
+  font-size: 0.78rem;
+}
+
+.meta-date svg {
+  width: 12px;
+  height: 12px;
+}
+
+.page-wrap {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 270px;
+  gap: clamp(2.5rem, 5vw, 4.5rem);
+  align-items: start;
+  max-width: 1240px;
+  margin: 0 auto;
+  padding: 4rem clamp(1.5rem, 5vw, 4rem) 5rem;
+}
+
+article {
+  width: 100%;
+  max-width: var(--article-width);
+}
+
+article h2 {
+  margin: 0.3rem 0 1rem;
+  font-family: "Syne", sans-serif;
+  font-size: clamp(1.45rem, 3vw, 1.75rem);
+  font-weight: 800;
+  letter-spacing: -0.025em;
+  line-height: 1.25;
+}
+
+article h3 {
+  font-family: "Syne", sans-serif;
+  font-size: 1.05rem;
+  line-height: 1.35;
+}
+
+article p {
+  margin-bottom: 1.1rem;
+  color: var(--muted);
+  font-size: 0.975rem;
+}
+
+article p strong {
+  color: var(--text);
+  font-weight: 600;
+}
+
+.section-label {
+  margin-top: 3rem;
+  margin-bottom: 0.6rem;
+}
+
+.section-divider {
+  margin: 3rem 0;
+  border: 0;
+  border-top: 1px solid var(--border);
+}
+
+.img-block {
+  margin: 0 0 3rem;
+}
+
+.img-block img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: var(--card);
+}
+
+.img-block figcaption {
+  margin-top: 0.65rem;
+  color: var(--quiet);
+  font-size: 0.78rem;
+  font-style: italic;
+  text-align: center;
+}
+
+.info-box {
+  margin: 1.6rem 0;
+  padding: 1.1rem 1.4rem;
+  border: 1px solid rgba(110, 231, 183, 0.17);
+  border-left: 3px solid var(--accent);
+  border-radius: 0 10px 10px 0;
+  background: rgba(110, 231, 183, 0.05);
+  color: var(--muted);
+  font-size: 0.92rem;
+}
+
+.info-box strong {
+  color: var(--accent);
+}
+
+.feature-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.72rem;
+  margin: 1rem 0 1.5rem;
+  list-style: none;
+}
+
+.feature-list li {
+  position: relative;
+  padding-left: 1.4rem;
+  color: var(--muted);
+  font-size: 0.92rem;
+}
+
+.feature-list li::before {
+  position: absolute;
+  top: 0;
+  left: 0;
+  color: var(--accent);
+  content: "→";
+  font-weight: 700;
+}
+
+.feature-list strong {
+  color: var(--text);
+  font-weight: 600;
+}
+
+.data-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1rem;
+  margin: 1.5rem 0 2rem;
+}
+
+.data-card {
+  position: relative;
+  min-height: 100%;
+  padding: 1.25rem;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--card);
+}
+
+.data-card::before {
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 2px;
+  content: "";
+}
+
+.data-card--sp500::before {
+  background: var(--accent);
+}
+
+.data-card--bitcoin::before {
+  background: var(--accent-2);
+}
+
+.data-card--gold::before {
+  background: var(--gold);
+}
+
+.data-card__number {
+  display: block;
+  margin-bottom: 0.45rem;
+  color: var(--quiet);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.data-card h3 {
+  margin-bottom: 0.65rem;
+}
+
+.data-card p {
+  margin: 0;
+  font-size: 0.84rem;
+  line-height: 1.65;
+}
+
+.code-block {
+  display: grid;
+  gap: 0.3rem;
+  margin: 1.8rem 0;
+  padding: 1.3rem 1.4rem;
+  overflow-x: auto;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--card);
+  color: var(--accent);
+  font-family: "Courier New", monospace;
+  font-size: 0.84rem;
+  line-height: 1.55;
+}
+
+.code-block b {
+  color: var(--quiet);
+  font-weight: 400;
+}
+
+.skill-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+  margin: 1.5rem 0;
+}
+
+.skill-card {
+  padding: 1.25rem;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--card);
+  transition: transform 160ms ease, border-color 160ms ease, background 160ms ease;
+}
+
+.skill-card:hover {
+  transform: translateY(-2px);
+  border-color: var(--border-strong);
+  background: var(--card-hover);
+}
+
+.skill-card h3 {
+  margin-bottom: 0.55rem;
+}
+
+.skill-card p {
+  margin: 0;
+  font-size: 0.86rem;
+  line-height: 1.65;
+}
+
+.skill-card--accent {
+  border-color: rgba(110, 231, 183, 0.25);
+  background: rgba(110, 231, 183, 0.055);
+}
+
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.sidebar-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 1.4rem;
+}
+
+.sidebar-card h4 {
+  font-family: "Syne", sans-serif;
+  font-size: 0.85rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+  color: var(--text);
+}
+
+.dl-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border-radius: 10px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  text-decoration: none;
+  margin-top: 0.6rem;
+  transition: all 0.2s;
+}
+
+.dl-btn.primary {
+  background: var(--accent);
+  color: var(--bg);
+}
+
+.dl-btn.primary:hover {
+  box-shadow: 0 6px 20px rgba(110, 231, 183, 0.3);
+  transform: translateY(-1px);
+}
+
+.dl-btn.ghost {
+  background: transparent;
+  color: var(--text);
+  border: 1px solid var(--border);
+}
+
+.dl-btn.ghost:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.dl-btn svg {
+  width: 14px;
+  height: 14px;
+  fill: currentColor;
+}
+
+.info-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.82rem;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.info-row:last-child {
+  border-bottom: 0;
+}
+
+.info-row span:first-child {
+  color: var(--muted);
+}
+
+.info-row span:last-child,
+.info-row strong {
+  color: var(--text);
+  font-weight: 500;
+}
+
+.info-row .status-online {
+  color: var(--accent);
+}
+
+footer {
+  background: var(--surface);
+  border-top: 1px solid var(--border);
+  padding: 3.5rem clamp(1.5rem, 8vw, 8rem) 2rem;
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
+.footer-inner {
+  display: grid;
+  grid-template-columns: 1.7fr 1fr 1fr;
+  gap: 3rem;
+  padding-bottom: 2.5rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.footer-logo {
+  display: inline-block;
+  margin-bottom: 0.9rem;
+}
+
+.footer-brand p {
+  max-width: 34ch;
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+.footer-col h5 {
+  font-family: "Syne", sans-serif;
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--text);
+  margin-bottom: 1rem;
+}
+
+.footer-col ul {
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+  list-style: none;
+}
+
+footer a {
+  color: var(--muted);
+  text-decoration: none;
+  transition: color 160ms ease;
+}
+
+footer a:hover {
+  color: var(--accent);
+}
+
+.footer-bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 1.6rem;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+}
+
+.footer-bottom a {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  font-weight: 500;
+  transition: all 0.2s;
+}
+
+.footer-bottom a:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.footer-bottom a svg {
+  width: 14px;
+  height: 14px;
+  fill: currentColor;
+}
+
+@media (max-width: 1080px) {
+  .nav-links {
+    gap: 1.35rem;
+  }
+
+  .data-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 960px) {
+  .main-nav {
+    justify-content: flex-start;
+    padding: 0 1.5rem;
+  }
+
+  .nav-logo {
+    position: static;
+  }
+
+  .nav-links,
+  .nav-github {
+    display: none;
+  }
+
+  .nav-toggle {
+    display: flex;
+    right: 1rem;
+    width: 44px;
+    height: 44px;
+  }
+
+  .mobile-menu {
+    display: block;
+  }
+}
+
+@media (max-width: 768px) {
+  .page-wrap {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 2rem;
+  }
+
+  article {
+    max-width: none;
+  }
+
+  .sidebar {
+    order: -1;
+  }
+
+  .hero {
+    padding-top: 3.3rem;
+    padding-bottom: 3rem;
+  }
+
+  .meta-divider {
+    display: none;
+  }
+
+  .meta-date {
+    width: 100%;
+  }
+
+  .page-wrap {
+    padding-top: 2rem;
+  }
+
+  .skill-grid,
+  .footer-inner {
+    grid-template-columns: 1fr;
+  }
+
+  .img-block {
+    margin-bottom: 2rem;
+  }
+
+  .footer-inner {
+    gap: 2rem;
+  }
+
+  .footer-bottom {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+}
+
+@media (max-width: 420px) {
+  .hero h1 {
+    overflow-wrap: anywhere;
+  }
+
+  .tag {
+    font-size: 0.68rem;
+  }
+
+  .page-wrap {
+    padding-inline: 1rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+  </style>
+  <link rel="stylesheet" href="project-responsive.css">
+
+  <link rel="stylesheet" href="../assets/site-header.css">
+  <script src="../assets/site-header.js" defer></script>
+</head>
+<body>
+  <nav class="main-nav" aria-label="Hauptnavigation">
+    <a href="../" class="nav-logo" aria-label="Zur Startseite">sms<span>.</span></a>
+    <ul class="nav-links">
+      <li><a href="../">Home</a></li>
+      <li><a href="../projekte/" class="active">Projekte</a></li>
+      <li><a href="../downloads">Downloads</a></li>
+      <li><a href="../projekt-pipeline">Projekt-Pipeline</a></li>
+      <li><a href="../vision">Vision</a></li>
+      <li><a href="../wissen">Wissen</a></li>
+    </ul>
+    <div class="nav-actions">
+      <button type="button" class="language-switch" data-language-target="/en/projects/backtester" data-language-file-target="../en/projects/backtester.html" aria-label="Zur englischen Version wechseln" title="Zur englischen Version wechseln"><span class="language-option language-option-active" aria-hidden="true">DE</span><span class="language-separator" aria-hidden="true">/</span><span class="language-option" aria-hidden="true">EN</span></button>
+      <a href="https://github.com/simons-0427" target="_blank" rel="noopener noreferrer" class="nav-github">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/></svg>
+      GitHub
+    </a>
+    </div>
+    <button class="nav-toggle" type="button" aria-label="Menü öffnen" aria-expanded="false" aria-controls="mobile-menu">
+      <span></span><span></span><span></span>
+    </button>
+  </nav>
+
+  <div class="mobile-menu" id="mobile-menu">
+    <ul>
+      <li><a href="../">Home</a></li>
+      <li><a href="../projekte/" class="active">Projekte</a></li>
+      <li><a href="../downloads">Downloads</a></li>
+      <li><a href="../projekt-pipeline">Projekt-Pipeline</a></li>
+      <li><a href="../vision">Vision</a></li>
+      <li><a href="../wissen">Wissen</a></li>
+      <li class="mobile-language-row">
+  <span class="mobile-language-label">Sprache</span>
+  <button type="button" class="language-switch" data-language-target="/en/projects/backtester" data-language-file-target="../en/projects/backtester.html" aria-label="Zur englischen Version wechseln" title="Zur englischen Version wechseln"><span class="language-option language-option-active" aria-hidden="true">DE</span><span class="language-separator" aria-hidden="true">/</span><span class="language-option" aria-hidden="true">EN</span></button>
+</li>
+<li><a href="https://github.com/simons-0427" target="_blank" rel="noopener noreferrer" class="mobile-github">GitHub</a></li>
+    </ul>
+  </div>
+
+  <header class="hero">
+    <div class="hero-inner">
+      <nav class="breadcrumb" aria-label="Breadcrumb">
+        <a href="index">Projekte</a>
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 18l6-6-6-6"/></svg>
+        <span>Assetklassen-Backtester</span>
+      </nav>
+      <p class="project-tag">Webentwicklung und Datenengineering</p>
+      <h1>Assetklassen-<em>Backtester</em></h1>
+      <p class="hero-desc">Der Backtester stellt Aktienindizes, Bitcoin, Gold, Immobilien, Anleihen, Rohstoffe und Geldmarkt auf derselben Kapitalbasis gegenüber. Inflation, TER und Steuern bleiben zunächst aus und lassen sich bei Bedarf in den Einstellungen zuschalten.</p>
+      <div class="meta-row" aria-label="Technologien und Projektstand">
+        <span class="tag tag--php">PHP 8.3</span>
+        <span class="tag tag--database">MySQL 8.0</span>
+        <span class="tag tag--data">Datenengineering</span>
+        <span class="tag tag--frontend">Chart.js</span>
+        <span class="meta-divider" aria-hidden="true"></span>
+        <span class="meta-date">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+          <time datetime="2027-02-28">28.02.2027</time>
+        </span>
+      </div>
+    </div>
+  </header>
+
+  <main class="page-wrap">
+    <article>
+      <figure class="img-block">
+        <img src="../images/og-backtester.png" alt="Assetklassen-Backtester mit mehreren Anlageklassen im Gesamtvergleich" width="1200" height="630">
+        <figcaption>Der öffentliche Vergleich arbeitet mit gespeicherten Tages-, Monats- und Quartalswerten.</figcaption>
+      </figure>
+
+      <p class="section-label">Über das Projekt</p>
+      <h2>Anlageklassen auf derselben Kapitalbasis</h2>
+      <p>Der Backtester zeigt, wie sich dasselbe Startkapital in Aktienindizes, Bitcoin, Gold, Immobilien, Anleihen, Rohstoffen und Geldmarkt entwickelt hätte. Besucher wählen Zeitraum, Kapital und Vergleichsreihen. Die Seite berechnet Endwert, Rendite, CAGR, Drawdown und weitere Risikokennzahlen aus den gespeicherten Beobachtungen.</p>
+      <p>Die Browserseite ruft keine Finanzanbieter auf. PHP lädt die Werte aus MySQL, berechnet die Vergleichsreihen und liefert ein festes JSON-Format. Dadurch bleiben API-Keys, Rohantworten und Providerlogik auf dem Server.</p>
+
+      <div class="info-box">
+        <strong>Aktueller Datenumfang:</strong> Börsentägliche, kalendertägliche, monatliche und quartalsweise Reihen ab 2016. Historische Fremdwährungswerte werden mit dem jeweiligen Referenzkurs in Euro umgerechnet.
+      </div>
+
+      <hr class="section-divider">
+
+      <p class="section-label">Funktionen</p>
+      <h2>Was der Backtester berechnet</h2>
+      <ul class="feature-list">
+        <li><strong>Marktübersicht:</strong> Die Tabelle lässt sich nach Rendite und den übrigen Kennzahlen sortieren. Nicht verfügbare Werte bleiben am Ende.</li>
+        <li><strong>Flexible Zeiträume:</strong> Eine Woche bis zehn Jahre, Maximalzeitraum, eigene Start- und Enddaten sowie ein verschiebbarer Zeitraumregler.</li>
+        <li><strong>Einzel- und Gesamtansicht:</strong> Jede Anlageklasse besitzt einen eigenen Verlauf. Im Gesamtchart steht beim Darüberfahren die renditestärkste Linie oben.</li>
+        <li><strong>Logarithmische Skala:</strong> Alle Y-Achsen bleiben positiv und bilden relative Veränderungen über lange Zeiträume lesbar ab.</li>
+        <li><strong>Erträge und Kosten:</strong> Dividenden fließen in die Gesamtrendite ein. Netto-Mietcashflow bleibt auf die Immobilien-Einzelverläufe begrenzt. Der TER-Schalter blendet dort erst bei Aktivierung die Eingabefelder ein.</li>
+        <li><strong>Steuern und reale Rendite:</strong> Der Vergleich startet nominal und ohne Steuermodell. In den Einstellungen lassen sich deutsche, europäische oder US-Inflation, eine eigene Jahresrate und die Steuerberechnung gezielt zuschalten.</li>
+        <li><strong>Echte Datenstände:</strong> Tooltips und Tabellen nennen den letzten tatsächlich beobachteten Handelstag.</li>
+        <li><strong>Fehlertoleranz:</strong> Ein Providerfehler löscht keine Historie. Besucher sehen weiter die zuletzt gespeicherten Werte.</li>
+      </ul>
+
+      <hr class="section-divider">
+
+      <p class="section-label">Datenpipeline</p>
+      <h2>Wie die Daten in den Backtester kommen</h2>
+      <div class="data-grid">
+        <section class="data-card data-card--bitcoin">
+          <span class="data-card__number">Tägliche Marktwerte</span>
+          <h3>Indizes, Bitcoin, Gold und Fonds</h3>
+          <p>CoinGecko liefert Bitcoin in Euro, FRED den S&amp;P 500 und GoldAPI den Goldpreis. MSCI World, DAX, EURO STOXX 50 sowie die Fonds-Proxys für globale Anleihen und Rohstoffe laufen über getrennte Yahoo-Parser. USD- und GBP-Werte werden mit dem passenden EZB-Referenzkurs in Euro umgerechnet.</p>
+        </section>
+        <section class="data-card data-card--sp500">
+          <span class="data-card__number">Amtliche Reihen</span>
+          <h3>Immobilien, Geldmarkt und Inflation</h3>
+          <p>US-Immobilienpreise kommen von der FHFA über FRED, deutsche Immobilienpreise und europäische Inflation von Eurostat. Die EZB stellt den zusammengesetzten €STR-Index bereit, die New York Fed den SOFR-Index und das BLS den US-Verbraucherpreisindex.</p>
+        </section>
+        <section class="data-card data-card--gold">
+          <span class="data-card__number">Erträge und Revisionen</span>
+          <h3>Dividenden und neue Veröffentlichungen</h3>
+          <p>Die S&amp;P-500-Dividendenrendite wird monatlich aus der freigegebenen Multpl-Tabelle übernommen. Hinterlegte Jahreswerte ergänzen MSCI World, DAX und EURO STOXX 50. Jeder Lauf prüft nur den passenden Rückblick, damit verspätete Veröffentlichungen und Revisionen ankommen, ohne die importierte Historie auszutauschen.</p>
+        </section>
+      </div>
+
+      <div class="code-block" aria-label="Datenfluss des Backtesters">
+        <span>Historische CSV-Dateien und laufende Provider</span>
+        <b>↓</b>
+        <span>Parser, Datumsprüfung und historische EUR-Umrechnung</span>
+        <b>↓</b>
+        <span>MySQL-Upsert mit Revisionen, Fälligkeiten und Locks</span>
+        <b>↓</b>
+        <span>Dividenden-, Kosten-, Steuer- und Inflationsmodell</span>
+        <b>↓</b>
+        <span>JSON-API, Marktübersicht und Chart.js</span>
+      </div>
+
+      <hr class="section-divider">
+
+      <p class="section-label">Technik</p>
+      <h2>Aufbau und Betrieb</h2>
+      <p><strong>Backend:</strong> Provideradapter liefern ein gemeinsames Beobachtungsformat. Ein Validierungsdienst prüft Datum, Währung, positive Werte und Duplikate. Repositories kapseln Datenbankabfragen; Services übernehmen Synchronisierung und Berechnung.</p>
+      <p><strong>Datenbank:</strong> Getrennte Tabellen speichern Quellen, Anlageklassen, Beobachtungen, Dividendenwerte, Sync-Zustände und protokollierte Läufe. Indizes beschleunigen Bereichsabfragen und die Suche nach fälligen Jobs.</p>
+      <p><strong>Frontend:</strong> Vanilla JavaScript verwaltet Zeitraumregler, Renditesortierung, Vergleichsreihen und die Schalter für Inflation, TER und Steuern. Optionale Modelle bleiben nach einem neuen Seitenaufruf aus. Chart.js liegt lokal auf dem Server; Live-Regionen und textliche Chart-Zusammenfassungen ergänzen die Diagramme.</p>
+      <p><strong>Betrieb:</strong> STRATO stellt PHP 8.3 und MySQL 8.0 bereit. FileZilla überträgt Dateien, SSH startet Tests und Importe. Ein externer HTTPS-Zeitplaner ruft den täglichen Update-Endpunkt mit einem geheimen Header auf.</p>
+
+      <hr class="section-divider">
+
+      <p class="section-label">Eingesetzte Skills</p>
+      <h2>Was ich umgesetzt habe</h2>
+      <div class="skill-grid">
+        <section class="skill-card">
+          <h3>Anforderungsanalyse</h3>
+          <p>Ich habe die Spezifikation in konkrete Aufgaben für Daten, API, Oberfläche, Sicherheit und Betrieb zerlegt. Funktionen ohne fertige Berechnung habe ich bewusst deaktiviert.</p>
+        </section>
+        <section class="skill-card">
+          <h3>Datenengineering</h3>
+          <p>Ich habe Minuten-, Tages-, Börsen- und Wechselkursdaten über Datum, Zeitzone und Revision zusammengeführt. Die fertigen CSV-Dateien habe ich mit Prüfsummen abgesichert.</p>
+        </section>
+        <section class="skill-card">
+          <h3>Finanzmethodik</h3>
+          <p>Ich habe Preisentwicklung, Dividenden und Mietcashflow getrennt gerechnet. Inflation, TER und Steuern greifen nur nach einer bewussten Auswahl; Fremdwährungswerte nutzen den Referenzkurs des jeweiligen Tages.</p>
+        </section>
+        <section class="skill-card">
+          <h3>PHP und APIs</h3>
+          <p>Ich habe das PHP-Backend in Provider, Domänenobjekte, Repositories und Services aufgeteilt. Die öffentlichen Endpunkte prüfen alle Eingaben und liefern ein einheitliches JSON-Format.</p>
+        </section>
+        <section class="skill-card">
+          <h3>MySQL</h3>
+          <p>Ich habe das MySQL-Schema mit idempotenten Upserts, Quellrevisionen, Datumsindizes, Sync-Cursor und auslaufenden Locks aufgebaut.</p>
+        </section>
+        <section class="skill-card">
+          <h3>Debugging</h3>
+          <p>Ich habe beim Debugging die STRATO-CGI-Abweichungen, einen PDO-Parameterfehler, einen falsch eingetragenen CoinGecko-Key und unklare HTTP-Fehler behoben.</p>
+        </section>
+        <section class="skill-card">
+          <h3>Tests</h3>
+          <p>Ich habe Tests für Rendite, CAGR, Drawdown, Dividenden, Mietcashflow, Inflation, TER, Steuern, Parser, CSV-Import, Request-Sicherheit, Backoff, Locks und logarithmische Charts geschrieben.</p>
+        </section>
+        <section class="skill-card">
+          <h3>Deployment</h3>
+          <p>Ich habe die Anwendung ohne Buildsystem auf Shared Hosting bereitgestellt. Uploads, Datenbankimporte, Servertests und tägliche Aktualisierungen laufen über SFTP, SSH, phpMyAdmin und einen externen Cron-Dienst.</p>
+        </section>
+      </div>
+
+      <hr class="section-divider">
+
+      <p class="section-label">Problemlösung</p>
+      <h2>Fehler, die in der Entwicklung sichtbar wurden</h2>
+      <ul class="feature-list">
+        <li><strong>MySQL ohne aktive Datenbank:</strong> Der Schemaimport lief nach der bewussten Auswahl der Zieldatenbank durch.</li>
+        <li><strong>STRATO-CGI statt klassischer CLI:</strong> Testausgabe und Argumentparser funktionieren ohne `STDERR`, `php -r` und `-f` vor den Skriptargumenten.</li>
+        <li><strong>PDO-Parameterfehler:</strong> Der Sync verwendet keine mehrfach gebundenen benannten Parameter mehr.</li>
+        <li><strong>Fehlende Goldtage:</strong> Das offizielle GLD-Archiv ergänzte 130 Handelstage ohne Wechsel der Datenreihe.</li>
+        <li><strong>Kein Hosting-Cronjob:</strong> Ein externer Dienst ruft den geschützten HTTPS-Endpunkt täglich auf.</li>
+      </ul>
+
+      <hr class="section-divider">
+
+      <p class="section-label">Rückblick</p>
+      <h2>Was ich bei diesem Projekt gelernt habe</h2>
+      <p>Ein Finanzchart ist erst der letzte Schritt. Der größere Teil der Arbeit steckt in Quellenwahl, Tagesbildung, historischer Währungsumrechnung, Datenrechten und einem Import, der bei Wiederholungen keine Werte beschädigt.</p>
+      <p>Shared Hosting setzt eigene Grenzen. PHP verhält sich dort nicht immer wie eine lokale CLI, und ein fehlender Hosting-Cronjob braucht einen sicheren Ersatz. Die Anwendung musste unter diesen Bedingungen testbar und wartbar bleiben.</p>
+      <p>Die laufenden Quellen schließen an die importierte Historie an und dürfen vorhandene Daten nicht überschreiben. Tägliche, monatliche und quartalsweise Reihen folgen deshalb getrennten Prüfintervallen.</p>
+    </article>
+
+    <aside class="sidebar" aria-label="Projektinformationen">
+      <div class="sidebar-card">
+        <h4>Links</h4>
+        <a href="../dashboards/backtester/" class="dl-btn primary">Backtester öffnen →</a>
+         <a href="../data/v1.3_backtester.zip" class="dl-btn ghost" download>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+        Backtester Download
+        <a href="https://github.com/simons-0427" target="_blank" rel="noopener noreferrer" class="dl-btn ghost">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/></svg>
+          GitHub ansehen
+        </a>
+      </div>
+
+      <div class="sidebar-card">
+        <h4>Projektinfos</h4>
+        <div class="info-row"><span>Version</span><strong>v1.3</strong></div>
+        <div class="info-row"><span>Veröffentlicht</span><strong><time datetime="2027-02-28">28.02.2027</time></strong></div>
+        <div class="info-row"><span>Backend</span><strong>PHP 8.3</strong></div>
+        <div class="info-row"><span>Datenbank</span><strong>MySQL 8.0</strong></div>
+        <div class="info-row"><span>Frontend</span><strong>Vanilla JS</strong></div>
+        <div class="info-row"><span>Charts</span><strong>Chart.js</strong></div>
+        <div class="info-row"><span>Zeitraum</span><strong>Seit 2016</strong></div>
+        <div class="info-row"><span>Status</span><span style="color:var(--accent)">✅ Fertig</span></div>
+      </div>
+
+    </aside>
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <a href="../" class="footer-logo">sms<span>.</span></a>
+        <p>Persönliche Finance-Tools, Dashboards und Programmierprojekte von Simon Stark. Stetig im Aufbau.</p>
+      </div>
+      <div class="footer-col">
+        <h5>Navigation</h5>
+        <ul>
+          <li><a href="../projekte/">Projekte</a></li>
+          <li><a href="../downloads">Downloads</a></li>
+          <li><a href="../projekt-pipeline">Projekt-Pipeline</a></li>
+          <li><a href="../vision">Vision</a></li>
+          <li><a href="../wissen">Wissen</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h5>Rechtliches</h5>
+        <ul>
+          <li><a href="../impressum">Impressum</a></li>
+          <li><a href="../datenschutz">Datenschutz</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 Simon Stark</span>
+      <a href="https://github.com/simons-0427" target="_blank" rel="noopener noreferrer">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/></svg>
+        github.com/simons-0427
+      </a>
+    </div>
+  </footer>
+
+  <script>
+    (() => {
+      const navToggle = document.querySelector('.nav-toggle');
+      const mobileMenu = document.getElementById('mobile-menu');
+      if (!navToggle || !mobileMenu) return;
+
+      navToggle.addEventListener('click', () => {
+        const isOpen = mobileMenu.classList.toggle('open');
+        navToggle.classList.toggle('open', isOpen);
+        navToggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+        navToggle.setAttribute('aria-label', isOpen ? 'Menü schließen' : 'Menü öffnen');
+      });
+
+      mobileMenu.querySelectorAll('a').forEach((link) => {
+        link.addEventListener('click', () => {
+          mobileMenu.classList.remove('open');
+          navToggle.classList.remove('open');
+          navToggle.setAttribute('aria-expanded', 'false');
+          navToggle.setAttribute('aria-label', 'Menü öffnen');
+        });
+      });
+    })();
+  </script>
+</body>
+</html>

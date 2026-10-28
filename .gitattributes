@@ -1,0 +1,5 @@
+/versionen/v1.3/** -text
+/data/v1.3_backtester.zip.sha256 -text
+/README.md -text
+/.gitattributes -text
+*.zip binary

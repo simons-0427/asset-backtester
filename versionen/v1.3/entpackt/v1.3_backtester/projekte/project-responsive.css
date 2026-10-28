@@ -1,0 +1,262 @@
+/* Shared mobile UI for project detail pages (firekalkulator pattern + overflow hardening).
+   Loaded after each page's inline <style>. Applies to all projekte/*.html except index.
+   IMPORTANT: Base rules must NOT override desktop measure (e.g. article max-width: 720px). */
+
+/* Safe global media only — does not change desktop layout measure */
+img,
+svg,
+video,
+canvas,
+iframe {
+  max-width: 100%;
+  height: auto;
+}
+
+/* Optional mobile-only line break inside titles */
+br.title-break {
+  display: none;
+}
+
+/* ── NAV → Hamburger (fire pattern, hardened) ── */
+@media (max-width: 960px) {
+  html,
+  body {
+    max-width: 100%;
+    overflow-x: hidden;
+  }
+
+  body {
+    width: 100%;
+  }
+
+  nav,
+  .main-nav {
+    justify-content: flex-start !important;
+    padding: 0 1rem !important;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+    /* Override broken "horizontal scroll nav" patterns on some pages */
+    overflow-x: visible !important;
+    white-space: normal !important;
+    gap: 0 !important;
+  }
+
+  nav .nav-links,
+  .main-nav .nav-links,
+  nav .nav-github,
+  .main-nav .nav-github {
+    display: none !important;
+  }
+
+  .nav-logo {
+    position: static !important;
+    margin-right: 0 !important;
+  }
+
+  .nav-toggle {
+    display: flex !important;
+    position: absolute;
+    right: 1rem;
+    width: 44px;
+    height: 44px;
+    flex-shrink: 0;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .mobile-menu {
+    display: block !important;
+    width: 100%;
+    max-width: 100%;
+    left: 0;
+    right: 0;
+    box-sizing: border-box;
+  }
+
+  .mobile-menu a {
+    min-height: 48px;
+    white-space: normal;
+  }
+}
+
+/* ── Layout ≤768 (firekalkulator pattern) ── */
+@media (max-width: 768px) {
+  .hero {
+    padding: 3rem 1.15rem 2.5rem;
+    max-width: 100%;
+    overflow-x: clip;
+    overflow-y: visible;
+    box-sizing: border-box;
+  }
+
+  .hero-inner {
+    max-width: 100% !important;
+    min-width: 0;
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  /* Lange Ein-Wort-Titel (z. B. „Unternehmensbewertung“) */
+  .hero h1 {
+    font-size: clamp(1.45rem, 6.2vw, 2.15rem);
+    letter-spacing: -0.035em;
+    line-height: 1.12;
+    margin-bottom: 1rem;
+    max-width: 100%;
+    min-width: 0;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+    hyphens: auto;
+    -webkit-hyphens: auto;
+  }
+
+  .hero h1 em {
+    display: inline;
+  }
+
+  br.title-break {
+    display: block;
+  }
+
+  .hero-desc {
+    max-width: none;
+    font-size: 0.98rem;
+    overflow-wrap: anywhere;
+  }
+
+  .page-wrap {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) !important;
+    gap: 2rem !important;
+    padding: 2rem 1.15rem 3rem !important;
+    max-width: 100% !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    box-sizing: border-box;
+  }
+
+  /* On mobile full width is intentional; desktop keeps inline --content */
+  article {
+    max-width: none !important;
+    width: 100%;
+    min-width: 0;
+  }
+
+  article p,
+  .info-box,
+  .tl-content {
+    overflow-wrap: anywhere;
+    word-break: break-word;
+  }
+
+  .sidebar {
+    order: -1;
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+  }
+
+  .sidebar-card {
+    max-width: 100%;
+  }
+
+  .img-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .img-block,
+  .img-grid,
+  .code-block,
+  .timeline,
+  .tl-item {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+  }
+
+  .code-block {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  video {
+    display: block;
+    width: 100%;
+  }
+
+  .tl-item {
+    grid-template-columns: minmax(0, 72px) minmax(0, 1fr);
+    gap: 0.85rem;
+  }
+
+  .meta-row {
+    gap: 0.5rem;
+  }
+
+  .meta-divider {
+    display: none;
+  }
+
+  .dl-btn {
+    min-height: 48px;
+  }
+
+  .footer-inner {
+    grid-template-columns: 1fr !important;
+    gap: 2rem !important;
+  }
+
+  .footer-bottom {
+    flex-direction: column !important;
+    text-align: center;
+  }
+
+  footer {
+    padding: 2.5rem 1.15rem 2rem;
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+
+  .footer-brand p {
+    max-width: none;
+  }
+
+  .skill-grid,
+  .data-grid,
+  .feature-grid {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+@media (max-width: 420px) {
+  .hero {
+    padding-inline: 1rem;
+  }
+
+  .page-wrap {
+    padding-inline: 1rem !important;
+  }
+
+  .tl-item {
+    grid-template-columns: 1fr;
+    gap: 0.35rem;
+  }
+
+  .hero h1 {
+    font-size: clamp(1.35rem, 6.8vw, 1.85rem);
+    letter-spacing: -0.04em;
+  }
+}
+
+@media (hover: none) {
+  .dl-btn.primary:hover {
+    transform: none;
+    box-shadow: none;
+  }
+
+  .related-card:hover,
+  .img-block:hover {
+    transform: none;
+  }
+}

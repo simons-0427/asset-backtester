@@ -1,0 +1,7 @@
+Money-market compounding audit
+formula: index_next = index_t * (1 + rate_t/100 * calendar_days/360)
+
+EUR weekend 2016-01-08 -> 2016-01-11 days=3 rate=-0.235 expected=99.9953250809 actual=99.9953250809 diff=0.00e+00
+EUR weekday 2016-01-04 -> 2016-01-05 days=1 rate=-0.241 expected=99.9993305556 actual=99.9993305556 diff=0.00e+00
+USD weekend 2016-01-08 -> 2016-01-11 days=3 rate=0.36 expected=100.0070001800 actual=100.0070001800 diff=0.00e+00
+USD weekday 2016-01-04 -> 2016-01-05 days=1 rate=0.36 expected=100.0010000000 actual=100.0010000000 diff=0.00e+00

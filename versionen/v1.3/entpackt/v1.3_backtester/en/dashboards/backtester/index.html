@@ -1,0 +1,792 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" type="image/svg+xml" href="../../../images/favicons/favicon-1g-dotgrid.svg">
+  <link rel="alternate icon" type="image/png" href="../../../images/favicons/favicon-1g-dotgrid-32.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="../../../images/favicons/favicon-1g-dotgrid-180.png">
+  <title>Asset class backtester | Compare historical returns</title>
+  <meta name="description" content="Compare stocks, Bitcoin, gold, real estate, global bonds, commodities and money markets in nominal or inflation-adjusted terms.">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://smstark-projekt.de/en/dashboards/backtester/">
+  <link rel="alternate" hreflang="de" href="https://smstark-projekt.de/dashboards/backtester/">
+  <link rel="alternate" hreflang="en" href="https://smstark-projekt.de/en/dashboards/backtester/">
+  <meta property="og:type" content="website">
+  <meta property="og:locale" content="en_GB">
+  <meta property="og:url" content="https://smstark-projekt.de/en/dashboards/backtester/">
+  <meta property="og:title" content="Asset class backtester">
+  <meta property="og:description" content="Compare what $10,000 in the S&amp;P 500, MSCI World, Bitcoin or gold could have become.">
+  <meta property="og:image" content="https://smstark-projekt.de/images/og-backtester.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="Dark preview card for the asset class backtester with S&amp;P 500, MSCI World, Bitcoin and gold">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="https://smstark-projekt.de/images/og-backtester.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&amp;family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,300&amp;display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/asset-backtester.css?v=20261028-v13z">
+  <link rel="stylesheet" href="assets/css/portfolio.css?v=20261028-v13y">
+  <script type="module" src="assets/js/asset-backtester/app.js?v=20261028-v13y"></script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "Asset class backtester",
+    "url": "https://smstark-projekt.de/en/dashboards/backtester/",
+    "applicationCategory": "FinanceApplication",
+    "operatingSystem": "Web",
+    "inLanguage": "en",
+    "description": "Historical comparison of the S&amp;P 500, MSCI World, Bitcoin and gold using return, risk and distribution metrics on the same capital basis.",
+    "isAccessibleForFree": true,
+    "author": {"@type": "Person", "name": "Simon Stark"}
+  }
+  </script>
+
+  <link rel="stylesheet" href="../../../assets/site-header.css">
+  <script src="../../../assets/site-header.js" defer></script>
+</head>
+<body>
+  <nav class="main-nav" aria-label="Main navigation">
+    <a href="/en/" class="nav-logo" aria-label="Go to home page">sms<span>.</span></a>
+    <ul class="nav-links">
+      <li><a href="../../">Home</a></li>
+<li><a href="/en/projects/">Projects</a></li>
+<li><a href="/en/downloads">Downloads</a></li>
+<li><a href="/en/project-pipeline">Project pipeline</a></li>
+<li><a href="/en/vision">Vision</a></li>
+<li><a href="/en/knowledge/">Knowledge</a></li>
+    </ul>
+<div class="nav-actions">
+      <button type="button" class="language-switch" data-language-target="/dashboards/backtester/" data-language-file-target="../../../dashboards/backtester/index.html" aria-label="Switch to German" title="Switch to German"><span class="language-option" aria-hidden="true">DE</span><span class="language-separator" aria-hidden="true">/</span><span class="language-option language-option-active" aria-hidden="true">EN</span></button>
+      <a href="https://github.com/simons-0427" target="_blank" rel="noopener noreferrer" class="nav-github">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/></svg>
+      GitHub
+    </a>
+    </div>
+    <button class="nav-toggle" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="mobile-menu">
+      <span></span><span></span><span></span>
+    </button>
+  </nav>
+
+  <div class="mobile-menu" id="mobile-menu">
+    <ul>
+      <li><a href="/en/">Home</a></li>
+<li><a href="/en/projects/">Projects</a></li>
+<li><a href="/en/downloads">Downloads</a></li>
+<li><a href="/en/project-pipeline">Project pipeline</a></li>
+<li><a href="/en/vision">Vision</a></li>
+<li><a href="/en/knowledge/">Knowledge</a></li>
+      <li class="mobile-language-row">
+  <span class="mobile-language-label">Language</span>
+  <button type="button" class="language-switch" data-language-target="/dashboards/backtester/" data-language-file-target="../../../dashboards/backtester/index.html" aria-label="Switch to German" title="Switch to German"><span class="language-option" aria-hidden="true">DE</span><span class="language-separator" aria-hidden="true">/</span><span class="language-option language-option-active" aria-hidden="true">EN</span></button>
+</li>
+      <li><a href="https://github.com/simons-0427" target="_blank" rel="noopener noreferrer" class="mobile-github">GitHub</a></li>
+    </ul>
+  </div>
+
+  <main class="asset-backtester" id="main-content">
+    <header class="asset-backtester__page-head">
+      <nav class="asset-backtester__breadcrumb" aria-label="Breadcrumb">
+        <a href="/en/">Home</a><span aria-hidden="true">/</span>
+        <a href="/en/#dashboards">Dashboards</a><span aria-hidden="true">/</span>
+        <span aria-current="page">Backtester</span>
+      </nav>
+      <div class="asset-backtester__head-row">
+        <div class="asset-backtester__head-copy">
+          <p class="asset-backtester__eyebrow">Historical comparison</p>
+          <h1>Asset class <em>backtester</em></h1>
+          <p class="asset-backtester__subtitle">See what <span data-fixed-start>$10,000</span> could have become.</p>
+          <p class="asset-backtester__intro">Compare stock indices including dividends with Bitcoin, gold, real estate, global investment-grade bonds, broad commodities and money markets on the same starting capital. The two real-estate series use separate rent assumptions; the overall comparison can be shown in nominal or real terms.</p>
+          <div class="asset-backtester__head-meta" aria-label="Data status and display currency">
+            <div class="asset-backtester__data-badge" id="global-data-status" aria-live="polite">
+              <span class="asset-backtester__status-dot" aria-hidden="true"></span>
+              <span>Loading data status</span>
+            </div>
+            <label class="asset-backtester__currency-select" for="display-currency">
+              <span class="sr-only">Display currency</span>
+              <select id="display-currency" aria-label="Display currency" disabled>
+                <option value="EUR">€ EUR</option>
+                <option value="GBP">£ GBP</option>
+                <option value="USD" selected>$ USD</option>
+                <option value="JPY">¥ JPY</option>
+                <option value="CNY">¥ CNY</option>
+              </select>
+            </label>
+          </div>
+          <div class="asset-backtester__loading-progress" id="loading-progress" role="status" aria-live="polite" aria-atomic="true">
+            <span data-load-text>Loading overview</span>
+            <progress max="21" value="0" aria-label="Loading progress"></progress>
+            <button type="button" hidden>Retry missing data</button>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <noscript>
+      <div class="asset-backtester__notice asset-backtester__notice--error">JavaScript is required for tables, charts and time-range controls.</div>
+    </noscript>
+    <div class="asset-backtester__live" id="app-live-region" role="status" aria-live="polite"></div>
+
+    <section class="asset-backtester__section asset-backtester__section--summary" aria-labelledby="summary-title">
+      <div class="asset-backtester__section-head">
+        <div>
+          <p class="asset-backtester__section-label">Market overview</p>
+          <h2 id="summary-title">Returns through the common data date</h2>
+        </div>
+        <p>Fixed periods with <span data-fixed-start>$10,000</span> starting capital</p>
+      </div>
+      <div class="asset-backtester__table-scroll" tabindex="0" aria-label="Multi-period comparison, horizontally scrollable">
+        <table class="asset-backtester__table" id="summary-table">
+            <caption class="sr-only">Return comparison for all asset classes over seven fixed periods</caption>
+          <thead>
+            <tr>
+              <th scope="col">Asset</th>
+              <th scope="col" aria-sort="none"><button class="asset-backtester__summary-sort" type="button" data-summary-sort="1W">1W <span aria-hidden="true"></span></button></th>
+              <th scope="col" aria-sort="none"><button class="asset-backtester__summary-sort" type="button" data-summary-sort="1M">1M <span aria-hidden="true"></span></button></th>
+              <th scope="col" aria-sort="none"><button class="asset-backtester__summary-sort" type="button" data-summary-sort="6M">6M <span aria-hidden="true"></span></button></th>
+              <th scope="col" aria-sort="none"><button class="asset-backtester__summary-sort" type="button" data-summary-sort="1Y">1Y <span aria-hidden="true"></span></button></th>
+              <th scope="col" aria-sort="none"><button class="asset-backtester__summary-sort" type="button" data-summary-sort="3Y">3Y <span aria-hidden="true"></span></button></th>
+              <th scope="col" aria-sort="none"><button class="asset-backtester__summary-sort" type="button" data-summary-sort="5Y">5Y <span aria-hidden="true"></span></button></th>
+              <th scope="col" aria-sort="none"><button class="asset-backtester__summary-sort" type="button" data-summary-sort="10Y">10Y <span aria-hidden="true"></span></button></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr data-summary-row="sp500"><th scope="row"><span class="asset-backtester__asset-mark asset-backtester__asset-mark--sp500"></span>S&amp;P 500</th></tr>
+            <tr data-summary-row="bitcoin"><th scope="row"><span class="asset-backtester__asset-mark asset-backtester__asset-mark--bitcoin"></span>Bitcoin</th></tr>
+            <tr data-summary-row="gold"><th scope="row"><span class="asset-backtester__asset-mark asset-backtester__asset-mark--gold"></span>Gold</th></tr>
+            <tr data-summary-row="msci_world"><th scope="row"><span class="asset-backtester__asset-mark asset-backtester__asset-mark--msci_world"></span>MSCI World</th></tr>
+            <tr data-summary-row="de_real_estate"><th scope="row"><span class="asset-backtester__asset-mark asset-backtester__asset-mark--de_real_estate"></span>Real estate Germany</th></tr>
+            <tr data-summary-row="us_real_estate"><th scope="row"><span class="asset-backtester__asset-mark asset-backtester__asset-mark--us_real_estate"></span>Real estate USA</th></tr>
+            <tr data-summary-row="dax"><th scope="row"><span class="asset-backtester__asset-mark asset-backtester__asset-mark--dax"></span>DAX</th></tr>
+            <tr data-summary-row="eurostoxx50"><th scope="row"><span class="asset-backtester__asset-mark asset-backtester__asset-mark--eurostoxx50"></span>EURO STOXX 50</th></tr>
+            <tr data-summary-row="global_ig_bonds"><th scope="row"><span class="asset-backtester__asset-mark asset-backtester__asset-mark--global_ig_bonds"></span>Global IG bonds (EUR hedged)</th></tr>
+            <tr data-summary-row="global_ig_bonds_unhedged"><th scope="row"><span class="asset-backtester__asset-mark asset-backtester__asset-mark--global_ig_bonds_unhedged"></span>Global IG bonds (unhedged)</th></tr>
+            <tr data-summary-row="commodities"><th scope="row"><span class="asset-backtester__asset-mark asset-backtester__asset-mark--commodities"></span>Broad commodities</th></tr>
+            <tr data-summary-row="euro_money_market"><th scope="row"><span class="asset-backtester__asset-mark asset-backtester__asset-mark--euro_money_market"></span>Euro money market</th></tr>
+            <tr data-summary-row="us_money_market"><th scope="row"><span class="asset-backtester__asset-mark asset-backtester__asset-mark--us_money_market"></span>US money market (EUR)</th></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="asset-backtester__mobile-scroll-hint" id="summary-scroll-hint"><span aria-hidden="true">↔</span> Swipe sideways for more periods</p>
+      <p class="asset-backtester__table-note" id="summary-note">Focus a table cell to see the date and starting value.</p>
+    </section>
+
+    <section class="asset-backtester__section" aria-labelledby="single-charts-title">
+      <div class="asset-backtester__section-head">
+        <div>
+          <p class="asset-backtester__section-label">Individual series</p>
+          <h2 id="single-charts-title">Market values and calculated growth</h2>
+        </div>
+        <p>Choose a period for each asset class</p>
+      </div>
+
+      <div class="asset-backtester__single-grid">
+        <article class="asset-backtester__chart-card" data-single-chart="sp500">
+          <div class="asset-backtester__chart-head">
+            <div>
+              <p class="asset-backtester__chart-kicker"><span class="asset-backtester__line-key asset-backtester__line-key--sp500"></span>US stock market</p>
+              <h3>S&amp;P 500: price &amp; dividends</h3>
+                        <p class="asset-backtester__proxy" data-proxy>Price series in EUR</p>
+            </div>
+            <div class="asset-backtester__quote">
+              <strong data-last-value>–</strong>
+  <span data-interval-return>– in period</span>
+            </div>
+          </div>
+          <div class="asset-backtester__intervals" role="group" aria-label="Time range for S&amp;P 500" data-intervals="sp500"></div>
+          <div class="asset-backtester__chart-frame">
+            <div class="asset-backtester__skeleton" aria-hidden="true"></div>
+             <canvas id="chart-sp500" aria-label="Historical S&amp;P 500 price index and separate calculated line including dividends" role="img"></canvas>
+            <div class="asset-backtester__chart-state" data-chart-state hidden></div>
+          </div>
+          <div class="asset-backtester__chart-foot">
+            <span><b data-hypothetical>–</b> from <span data-fixed-start>$10,000</span></span>
+  <span data-raw-date>Data date –</span>
+          </div>
+          <p class="asset-backtester__chart-summary sr-only" data-chart-summary></p>
+        </article>
+
+        <article class="asset-backtester__chart-card" data-single-chart="bitcoin">
+          <div class="asset-backtester__chart-head">
+            <div>
+              <p class="asset-backtester__chart-kicker"><span class="asset-backtester__line-key asset-backtester__line-key--bitcoin"></span>Crypto, BTC/EUR</p>
+              <h3>Bitcoin</h3>
+              <p class="asset-backtester__proxy" data-proxy>UTC daily reference value</p>
+            </div>
+            <div class="asset-backtester__quote">
+              <strong data-last-value>–</strong>
+  <span data-interval-return>– in period</span>
+            </div>
+          </div>
+          <div class="asset-backtester__intervals" role="group" aria-label="Time range for Bitcoin" data-intervals="bitcoin"></div>
+          <div class="asset-backtester__chart-frame">
+            <div class="asset-backtester__skeleton" aria-hidden="true"></div>
+            <canvas id="chart-bitcoin" aria-label="Historical Bitcoin series in euros" role="img"></canvas>
+            <div class="asset-backtester__chart-state" data-chart-state hidden></div>
+          </div>
+          <div class="asset-backtester__chart-foot">
+            <span><b data-hypothetical>–</b> from <span data-fixed-start>$10,000</span></span>
+  <span data-raw-date>Data date –</span>
+          </div>
+          <p class="asset-backtester__chart-summary sr-only" data-chart-summary></p>
+        </article>
+
+        <article class="asset-backtester__chart-card" data-single-chart="gold">
+          <div class="asset-backtester__chart-head">
+            <div>
+              <p class="asset-backtester__chart-kicker"><span class="asset-backtester__line-key asset-backtester__line-key--gold"></span>Precious metal</p>
+              <h3>Gold</h3>
+              <p class="asset-backtester__proxy" data-proxy>Investable EUR proxy</p>
+            </div>
+            <div class="asset-backtester__quote">
+              <strong data-last-value>–</strong>
+  <span data-interval-return>– in period</span>
+            </div>
+          </div>
+          <div class="asset-backtester__intervals" role="group" aria-label="Time range for Gold" data-intervals="gold"></div>
+          <div class="asset-backtester__chart-frame">
+            <div class="asset-backtester__skeleton" aria-hidden="true"></div>
+            <canvas id="chart-gold" aria-label="Historical gold proxy series" role="img"></canvas>
+            <div class="asset-backtester__chart-state" data-chart-state hidden></div>
+          </div>
+          <div class="asset-backtester__chart-foot">
+            <span><b data-hypothetical>–</b> from <span data-fixed-start>$10,000</span></span>
+  <span data-raw-date>Data date –</span>
+          </div>
+          <p class="asset-backtester__chart-summary sr-only" data-chart-summary></p>
+        </article>
+
+        <article class="asset-backtester__chart-card" data-single-chart="msci_world">
+          <div class="asset-backtester__chart-head">
+            <div>
+              <p class="asset-backtester__chart-kicker"><span class="asset-backtester__line-key asset-backtester__line-key--msci_world"></span>Developed-markets stocks</p>
+              <h3>MSCI World: price &amp; dividends</h3>
+              <p class="asset-backtester__proxy" data-proxy>Price series in EUR</p>
+            </div>
+            <div class="asset-backtester__quote">
+              <strong data-last-value>–</strong>
+  <span data-interval-return>– in period</span>
+            </div>
+          </div>
+          <div class="asset-backtester__intervals" role="group" aria-label="Time range for MSCI World" data-intervals="msci_world"></div>
+          <div class="asset-backtester__chart-frame">
+            <div class="asset-backtester__skeleton" aria-hidden="true"></div>
+            <canvas id="chart-msci_world" aria-label="Historical MSCI World price index and separate calculated line including dividends" role="img"></canvas>
+            <div class="asset-backtester__chart-state" data-chart-state hidden></div>
+          </div>
+          <div class="asset-backtester__chart-foot">
+            <span><b data-hypothetical>–</b> from <span data-fixed-start>$10,000</span></span>
+  <span data-raw-date>Data date –</span>
+          </div>
+          <p class="asset-backtester__chart-summary sr-only" data-chart-summary></p>
+        </article>
+
+        <article class="asset-backtester__chart-card" data-single-chart="de_real_estate">
+          <div class="asset-backtester__chart-head">
+            <div>
+              <p class="asset-backtester__chart-kicker"><span class="asset-backtester__line-key asset-backtester__line-key--de_real_estate"></span>German residential real estate</p>
+              <h3>Real-estate prices &amp; net rental cash flow</h3>
+              <p class="asset-backtester__proxy" data-proxy>Eurostat residential property price index, quarterly</p>
+            </div>
+            <div class="asset-backtester__quote">
+              <strong data-last-value>–</strong>
+  <span data-interval-return>– in period</span>
+            </div>
+          </div>
+          <div class="asset-backtester__rent-control asset-backtester__rent-control--de">
+            <label for="single-de-net-rent">Net rental cash flow p.a.</label>
+            <div class="asset-backtester__percent-input">
+              <input id="single-de-net-rent" data-net-rent-input="de_real_estate" type="number" min="0" max="15" step="0.1" value="3" inputmode="decimal">
+              <span>%</span>
+            </div>
+            <p>Default: 3.0% after ongoing property costs, without reinvestment. <a class="asset-backtester__field-link" href="/en/projects/property-calculator">Calculate real-estate costs</a></p>
+          </div>
+           <div class="asset-backtester__intervals" role="group" aria-label="Time range for German real estate" data-intervals="de_real_estate"></div>
+          <div class="asset-backtester__chart-frame">
+            <div class="asset-backtester__skeleton" aria-hidden="true"></div>
+            <canvas id="chart-de-real-estate" aria-label="German residential property price index and separate line including net rental cash flow" role="img"></canvas>
+            <div class="asset-backtester__chart-state" data-chart-state hidden></div>
+          </div>
+          <div class="asset-backtester__chart-foot">
+            <span><b data-hypothetical>–</b> from <span data-fixed-start>$10,000</span></span>
+  <span data-raw-date>Data date –</span>
+          </div>
+          <p class="asset-backtester__chart-summary sr-only" data-chart-summary></p>
+        </article>
+
+        <article class="asset-backtester__chart-card" data-single-chart="dax">
+          <div class="asset-backtester__chart-head">
+            <div>
+              <p class="asset-backtester__chart-kicker"><span class="asset-backtester__line-key asset-backtester__line-key--dax"></span>German stock market</p>
+              <h3>DAX: price &amp; dividends</h3>
+              <p class="asset-backtester__proxy" data-proxy>DAX price index</p>
+            </div>
+            <div class="asset-backtester__quote">
+              <strong data-last-value>–</strong>
+  <span data-interval-return>– in period</span>
+            </div>
+          </div>
+          <div class="asset-backtester__intervals" role="group" aria-label="Time range for DAX" data-intervals="dax"></div>
+          <div class="asset-backtester__chart-frame">
+            <div class="asset-backtester__skeleton" aria-hidden="true"></div>
+            <canvas id="chart-dax" aria-label="Historical DAX price index and separate calculated line including dividends" role="img"></canvas>
+            <div class="asset-backtester__chart-state" data-chart-state hidden></div>
+          </div>
+          <div class="asset-backtester__chart-foot">
+            <span><b data-hypothetical>–</b> from <span data-fixed-start>$10,000</span></span>
+  <span data-raw-date>Data date –</span>
+          </div>
+          <p class="asset-backtester__chart-summary sr-only" data-chart-summary></p>
+        </article>
+
+        <article class="asset-backtester__chart-card" data-single-chart="eurostoxx50">
+          <div class="asset-backtester__chart-head">
+            <div>
+              <p class="asset-backtester__chart-kicker"><span class="asset-backtester__line-key asset-backtester__line-key--eurostoxx50"></span>Euro-area stock market</p>
+              <h3>EURO STOXX 50: price &amp; dividends</h3>
+              <p class="asset-backtester__proxy" data-proxy>EURO STOXX 50 Price Index</p>
+            </div>
+            <div class="asset-backtester__quote">
+              <strong data-last-value>–</strong>
+  <span data-interval-return>– in period</span>
+            </div>
+          </div>
+          <div class="asset-backtester__intervals" role="group" aria-label="Time range for EURO STOXX 50" data-intervals="eurostoxx50"></div>
+          <div class="asset-backtester__chart-frame">
+            <div class="asset-backtester__skeleton" aria-hidden="true"></div>
+            <canvas id="chart-eurostoxx50" aria-label="Historical EURO STOXX 50 price index and separate calculated line including dividends" role="img"></canvas>
+            <div class="asset-backtester__chart-state" data-chart-state hidden></div>
+          </div>
+          <div class="asset-backtester__chart-foot">
+            <span><b data-hypothetical>–</b> from <span data-fixed-start>$10,000</span></span>
+  <span data-raw-date>Data date –</span>
+          </div>
+          <p class="asset-backtester__chart-summary sr-only" data-chart-summary></p>
+        </article>
+
+        <article class="asset-backtester__chart-card" data-single-chart="us_real_estate">
+          <div class="asset-backtester__chart-head">
+            <div>
+              <p class="asset-backtester__chart-kicker"><span class="asset-backtester__line-key asset-backtester__line-key--us_real_estate"></span>US residential real estate</p>
+              <h3>Real-estate prices &amp; net rental cash flow</h3>
+              <p class="asset-backtester__proxy" data-proxy>FHFA residential property price index, monthly</p>
+            </div>
+            <div class="asset-backtester__quote">
+              <strong data-last-value>–</strong>
+  <span data-interval-return>– in period</span>
+            </div>
+          </div>
+          <div class="asset-backtester__rent-control">
+            <label for="single-net-rent">Net rental cash flow p.a.</label>
+            <div class="asset-backtester__percent-input">
+              <input id="single-net-rent" data-net-rent-input="us_real_estate" type="number" min="0" max="15" step="0.1" value="5" inputmode="decimal">
+              <span>%</span>
+            </div>
+            <p>Default: 5.0% after ongoing property costs, without reinvestment. <a class="asset-backtester__field-link" href="/en/projects/property-calculator">Calculate real-estate costs</a></p>
+          </div>
+           <div class="asset-backtester__intervals" role="group" aria-label="Time range for US real estate" data-intervals="us_real_estate"></div>
+          <div class="asset-backtester__chart-frame">
+            <div class="asset-backtester__skeleton" aria-hidden="true"></div>
+            <canvas id="chart-us-real-estate" aria-label="US residential property price index and separate line including net rental cash flow" role="img"></canvas>
+            <div class="asset-backtester__chart-state" data-chart-state hidden></div>
+          </div>
+          <div class="asset-backtester__chart-foot">
+            <span><b data-hypothetical>–</b> from <span data-fixed-start>$10,000</span></span>
+  <span data-raw-date>Data date –</span>
+          </div>
+          <p class="asset-backtester__chart-summary sr-only" data-chart-summary></p>
+        </article>
+
+        <article class="asset-backtester__chart-card" data-single-chart="global_ig_bonds">
+          <div class="asset-backtester__chart-head">
+            <div>
+              <p class="asset-backtester__chart-kicker"><span class="asset-backtester__line-key asset-backtester__line-key--global_ig_bonds"></span>Global bonds</p>
+              <h3>Global IG bonds (EUR hedged)</h3>
+              <p class="asset-backtester__proxy" data-proxy>Accumulating total-return proxy</p>
+            </div>
+            <div class="asset-backtester__quote"><strong data-last-value>–</strong><span data-interval-return>– in period</span></div>
+          </div>
+           <div class="asset-backtester__intervals" role="group" aria-label="Time range for global investment-grade bonds in euros" data-intervals="global_ig_bonds"></div>
+          <div class="asset-backtester__chart-frame">
+            <div class="asset-backtester__skeleton" aria-hidden="true"></div>
+            <canvas id="chart-global-ig-bonds" aria-label="Historical global investment-grade bond series hedged to euros" role="img"></canvas>
+            <div class="asset-backtester__chart-state" data-chart-state hidden></div>
+          </div>
+          <div class="asset-backtester__chart-foot"><span><b data-hypothetical>–</b> from <span data-fixed-start>$10,000</span></span><span data-raw-date>Data date –</span></div>
+          <p class="asset-backtester__chart-summary sr-only" data-chart-summary></p>
+        </article>
+
+        <article class="asset-backtester__chart-card" data-single-chart="global_ig_bonds_unhedged">
+          <div class="asset-backtester__chart-head">
+            <div>
+              <p class="asset-backtester__chart-kicker"><span class="asset-backtester__line-key asset-backtester__line-key--global_ig_bonds_unhedged"></span>Global bonds &amp; currency</p>
+              <h3>Global IG bonds (unhedged)</h3>
+              <p class="asset-backtester__proxy" data-proxy>Total return from a EUR investor’s perspective</p>
+            </div>
+            <div class="asset-backtester__quote"><strong data-last-value>–</strong><span data-interval-return>– in period</span></div>
+          </div>
+           <div class="asset-backtester__intervals" role="group" aria-label="Time range for global unhedged investment-grade bonds" data-intervals="global_ig_bonds_unhedged"></div>
+          <div class="asset-backtester__chart-frame">
+            <div class="asset-backtester__skeleton" aria-hidden="true"></div>
+            <canvas id="chart-global-ig-bonds-unhedged" aria-label="Historical global investment-grade bond series without euro hedging" role="img"></canvas>
+            <div class="asset-backtester__chart-state" data-chart-state hidden></div>
+          </div>
+          <div class="asset-backtester__chart-foot"><span><b data-hypothetical>–</b> from <span data-fixed-start>$10,000</span></span><span data-raw-date>Data date –</span></div>
+          <p class="asset-backtester__chart-summary sr-only" data-chart-summary></p>
+        </article>
+
+        <article class="asset-backtester__chart-card" data-single-chart="commodities">
+          <div class="asset-backtester__chart-head">
+            <div>
+              <p class="asset-backtester__chart-kicker"><span class="asset-backtester__line-key asset-backtester__line-key--commodities"></span>Global commodity basket</p>
+              <h3>Broad commodities</h3>
+              <p class="asset-backtester__proxy" data-proxy>Broad ETC total-return proxy in EUR</p>
+            </div>
+            <div class="asset-backtester__quote"><strong data-last-value>–</strong><span data-interval-return>– in period</span></div>
+          </div>
+           <div class="asset-backtester__intervals" role="group" aria-label="Time range for broad commodities" data-intervals="commodities"></div>
+          <div class="asset-backtester__chart-frame">
+            <div class="asset-backtester__skeleton" aria-hidden="true"></div>
+            <canvas id="chart-commodities" aria-label="Historical broad commodity basket series from a euro investor's perspective" role="img"></canvas>
+            <div class="asset-backtester__chart-state" data-chart-state hidden></div>
+          </div>
+          <div class="asset-backtester__chart-foot"><span><b data-hypothetical>–</b> from <span data-fixed-start>$10,000</span></span><span data-raw-date>Data date –</span></div>
+          <p class="asset-backtester__chart-summary sr-only" data-chart-summary></p>
+        </article>
+
+        <article class="asset-backtester__chart-card" data-single-chart="euro_money_market">
+          <div class="asset-backtester__chart-head">
+            <div>
+              <p class="asset-backtester__chart-kicker"><span class="asset-backtester__line-key asset-backtester__line-key--euro_money_market"></span>Euro-area liquidity</p>
+              <h3>Euro money market</h3>
+              <p class="asset-backtester__proxy" data-proxy>EONIA/€STR wealth index</p>
+            </div>
+            <div class="asset-backtester__quote"><strong data-last-value>–</strong><span data-interval-return>– in period</span></div>
+          </div>
+           <div class="asset-backtester__intervals" role="group" aria-label="Time range for the euro money market" data-intervals="euro_money_market"></div>
+          <div class="asset-backtester__chart-frame">
+            <div class="asset-backtester__skeleton" aria-hidden="true"></div>
+            <canvas id="chart-euro-money-market" aria-label="Historical euro money-market wealth index" role="img"></canvas>
+            <div class="asset-backtester__chart-state" data-chart-state hidden></div>
+          </div>
+          <div class="asset-backtester__chart-foot"><span><b data-hypothetical>–</b> from <span data-fixed-start>$10,000</span></span><span data-raw-date>Data date –</span></div>
+          <p class="asset-backtester__chart-summary sr-only" data-chart-summary></p>
+        </article>
+
+        <article class="asset-backtester__chart-card" data-single-chart="us_money_market">
+          <div class="asset-backtester__chart-head">
+            <div>
+              <p class="asset-backtester__chart-kicker"><span class="asset-backtester__line-key asset-backtester__line-key--us_money_market"></span>Liquidity &amp; USD/EUR</p>
+              <h3>US money market (EUR)</h3>
+              <p class="asset-backtester__proxy" data-proxy>EFFR/SOFR wealth index from a EUR perspective</p>
+            </div>
+            <div class="asset-backtester__quote"><strong data-last-value>–</strong><span data-interval-return>– in period</span></div>
+          </div>
+           <div class="asset-backtester__intervals" role="group" aria-label="Time range for the US money market from a euro investor's perspective" data-intervals="us_money_market"></div>
+          <div class="asset-backtester__chart-frame">
+            <div class="asset-backtester__skeleton" aria-hidden="true"></div>
+            <canvas id="chart-us-money-market" aria-label="Historical US money-market wealth index from a euro investor's perspective" role="img"></canvas>
+            <div class="asset-backtester__chart-state" data-chart-state hidden></div>
+          </div>
+          <div class="asset-backtester__chart-foot"><span><b data-hypothetical>–</b> from <span data-fixed-start>$10,000</span></span><span data-raw-date>Data date –</span></div>
+          <p class="asset-backtester__chart-summary sr-only" data-chart-summary></p>
+        </article>
+        <div id="portfolio-single-charts" class="asset-backtester__single-grid asset-backtester__portfolio-singles" aria-label="Portfolio individual charts" hidden></div>
+      </div>
+    </section>
+
+    <section class="asset-backtester__section" aria-labelledby="comparison-title">
+      <div class="asset-backtester__section-head">
+        <div>
+          <p class="asset-backtester__section-label">Overall comparison</p>
+          <h2 id="comparison-title">The same starting capital over the same period</h2>
+        </div>
+      </div>
+
+      <div class="asset-backtester__comparison-card">
+        <div class="asset-backtester__control-grid">
+          <div class="asset-backtester__field">
+            <label for="backtest-amount">Starting capital</label>
+            <div class="asset-backtester__money-input">
+              <input id="backtest-amount" type="number" min="100" max="10000000" step="100" value="10000" inputmode="decimal">
+              <span id="start-capital-currency-symbol">$</span>
+            </div>
+          </div>
+          <fieldset class="asset-backtester__asset-selector">
+            <legend>Comparison series</legend>
+            <div class="asset-backtester__asset-selector-row">
+              <div class="asset-backtester__asset-selector-main">
+                <label><input data-comparison-option type="checkbox" value="sp500" checked><span><i class="asset-backtester__line-key asset-backtester__line-key--sp500"></i>S&amp;P 500</span></label>
+                <label><input data-comparison-option type="checkbox" value="bitcoin" checked><span><i class="asset-backtester__line-key asset-backtester__line-key--bitcoin"></i>Bitcoin</span></label>
+                <label><input data-comparison-option type="checkbox" value="gold" checked><span><i class="asset-backtester__line-key asset-backtester__line-key--gold"></i>Gold</span></label>
+                <label><input data-comparison-option type="checkbox" value="us_real_estate" checked><span><i class="asset-backtester__line-key asset-backtester__line-key--us_real_estate"></i>Real estate USA</span></label>
+                <label><input data-comparison-option type="checkbox" value="euro_money_market" checked><span><i class="asset-backtester__line-key asset-backtester__line-key--euro_money_market"></i>Euro money market</span></label>
+                <label><input data-comparison-option type="checkbox" value="de_real_estate"><span><i class="asset-backtester__line-key asset-backtester__line-key--de_real_estate"></i>Real estate Germany</span></label>
+                <label><input data-comparison-option type="checkbox" value="msci_world"><span><i class="asset-backtester__line-key asset-backtester__line-key--msci_world"></i>MSCI World</span></label>
+                <label><input data-comparison-option type="checkbox" value="global_ig_bonds"><span><i class="asset-backtester__line-key asset-backtester__line-key--global_ig_bonds"></i>Global IG</span></label>
+                <label><input data-comparison-option type="checkbox" value="commodities"><span><i class="asset-backtester__line-key asset-backtester__line-key--commodities"></i>Commodities</span></label>
+                <label><input data-comparison-option type="checkbox" value="us_money_market"><span><i class="asset-backtester__line-key asset-backtester__line-key--us_money_market"></i>US money market</span></label>
+              </div>
+              <details class="asset-backtester__comparison-config" id="comparison-config">
+                <summary>Settings <span data-comparison-config-count>5/17</span></summary>
+                <div class="asset-backtester__comparison-config-menu" aria-label="Settings for comparison series, inflation, TER and taxes">
+                  <div class="asset-backtester__config-top"><strong>Settings</strong><button type="button" id="comparison-config-close" class="asset-backtester__config-close" aria-label="Close settings"><span>Close</span><span aria-hidden="true">×</span></button></div>
+                  <div class="asset-backtester__config-head">
+                    <p>All lines</p>
+                    <div class="asset-backtester__config-actions">
+                      <button type="button" data-select-all>Select all</button>
+                      <button type="button" data-clear-all>Clear all</button>
+                    </div>
+                  </div>
+                  <div class="asset-backtester__config-options">
+                    <label><input data-comparison-option type="checkbox" value="sp500"><span><i class="asset-backtester__line-key asset-backtester__line-key--sp500"></i>S&amp;P 500</span></label>
+                    <label><input data-comparison-option type="checkbox" value="bitcoin"><span><i class="asset-backtester__line-key asset-backtester__line-key--bitcoin"></i>Bitcoin</span></label>
+                    <label><input data-comparison-option type="checkbox" value="gold"><span><i class="asset-backtester__line-key asset-backtester__line-key--gold"></i>Gold</span></label>
+                    <label><input data-comparison-option type="checkbox" value="msci_world"><span><i class="asset-backtester__line-key asset-backtester__line-key--msci_world"></i>MSCI World</span></label>
+                    <label><input data-comparison-option type="checkbox" value="de_real_estate"><span><i class="asset-backtester__line-key asset-backtester__line-key--de_real_estate"></i>Real estate Germany</span></label>
+                    <label><input data-comparison-option type="checkbox" value="us_real_estate"><span><i class="asset-backtester__line-key asset-backtester__line-key--us_real_estate"></i>Real estate USA</span></label>
+                    <label><input data-comparison-option type="checkbox" value="global_ig_bonds"><span><i class="asset-backtester__line-key asset-backtester__line-key--global_ig_bonds"></i>Global IG (hedged)</span></label>
+                    <label><input data-comparison-option type="checkbox" value="global_ig_bonds_unhedged"><span><i class="asset-backtester__line-key asset-backtester__line-key--global_ig_bonds_unhedged"></i>Global IG (unhedged)</span></label>
+                    <label><input data-comparison-option type="checkbox" value="commodities"><span><i class="asset-backtester__line-key asset-backtester__line-key--commodities"></i>Broad commodities</span></label>
+                    <label><input data-comparison-option type="checkbox" value="euro_money_market"><span><i class="asset-backtester__line-key asset-backtester__line-key--euro_money_market"></i>Euro money market</span></label>
+                    <label><input data-comparison-option type="checkbox" value="us_money_market"><span><i class="asset-backtester__line-key asset-backtester__line-key--us_money_market"></i>US money market (EUR)</span></label>
+                    <label><input data-comparison-option type="checkbox" value="dax"><span><i class="asset-backtester__line-key asset-backtester__line-key--dax"></i>DAX</span></label>
+                    <label><input data-comparison-option type="checkbox" value="eurostoxx50"><span><i class="asset-backtester__line-key asset-backtester__line-key--eurostoxx50"></i>EURO STOXX 50</span></label>
+                    <label><input data-comparison-option type="checkbox" value="sp500_price"><span><i class="asset-backtester__line-key asset-backtester__line-key--sp500-dividends"></i>S&amp;P 500 price only</span></label>
+                    <label><input data-comparison-option type="checkbox" value="msci_world_price"><span><i class="asset-backtester__line-key asset-backtester__line-key--msci_world-price"></i>MSCI World price only</span></label>
+                    <label><input data-comparison-option type="checkbox" value="dax_price"><span><i class="asset-backtester__line-key asset-backtester__line-key--dax-price"></i>DAX price only</span></label>
+                    <label><input data-comparison-option type="checkbox" value="eurostoxx50_price"><span><i class="asset-backtester__line-key asset-backtester__line-key--eurostoxx50-price"></i>EURO STOXX 50 price only</span></label>
+                  </div>
+                  <div class="asset-backtester__inflation-controls">
+                    <p>Purchasing power</p>
+                    <label for="comparison-inflation">Show return</label>
+                    <select id="comparison-inflation">
+                      <option value="none" selected>Nominal (no inflation adjustment)</option>
+                      <option value="inflation_de">Real | Germany inflation</option>
+                          <option value="inflation_euro_area">Real | euro-area inflation</option>
+                          <option value="inflation_us">Real | US inflation</option>
+                          <option value="custom">Real | custom inflation</option>
+                    </select>
+                    <label for="custom-inflation-pct" data-custom-inflation-control hidden>Custom inflation p.a.</label>
+                    <div class="asset-backtester__percent-input" data-custom-inflation-control hidden>
+                      <input id="custom-inflation-pct" type="number" min="-5" max="30" step="0.1" value="2" inputmode="decimal">
+                      <span>%</span>
+                    </div>
+                    <small>This selection deflates every line to purchasing power at the start date.</small>
+                  </div>
+                  <div class="asset-backtester__comparison-ter-controls">
+                    <div class="asset-backtester__comparison-ter-head">
+                        <p>TER</p>
+                      <label class="asset-backtester__switch" for="comparison-ter-enabled">
+                        <input id="comparison-ter-enabled" type="checkbox">
+                          <span>Enable TER model</span>
+                      </label>
+                    </div>
+                    <label for="comparison-ter-pct" data-comparison-ter-settings hidden>TER in overall comparison p.a.</label>
+                    <div class="asset-backtester__percent-input" data-comparison-ter-settings hidden>
+                      <input id="comparison-ter-pct" data-comparison-ter-dependent type="number" min="0" max="5" step="0.01" value="0.10" inputmode="decimal" disabled>
+                      <span>%</span>
+                    </div>
+                    <small data-comparison-ter-settings hidden>Enables the detailed TER fields in every individual series. The rate entered here applies uniformly to the overall comparison.</small>
+                  </div>
+                  <div class="asset-backtester__tax-controls">
+                    <div class="asset-backtester__tax-head">
+                        <p>Taxes</p>
+                      <label class="asset-backtester__switch" for="comparison-taxes-enabled">
+                    <input id="comparison-taxes-enabled" type="checkbox" autocomplete="off">
+                          <span>Enable tax model</span>
+                      </label>
+                    </div>
+                    <label for="personal-income-tax-pct" data-tax-settings hidden>Personal tax rate</label>
+                    <div class="asset-backtester__percent-input" data-tax-settings hidden>
+                      <input id="personal-income-tax-pct" data-tax-dependent type="number" min="0" max="45" step="0.1" value="42" inputmode="decimal" disabled>
+                      <span>%</span>
+                    </div>
+                    <label for="capital-allowance" data-tax-settings hidden>Capital allowance</label>
+                    <div class="asset-backtester__money-input" data-tax-settings hidden>
+                      <input id="capital-allowance" data-tax-dependent type="number" min="0" max="10000" step="50" value="1000" inputmode="decimal" disabled>
+                      <span>€</span>
+                    </div>
+                    <label for="church-tax-pct" data-tax-settings hidden>Church tax</label>
+                    <select id="church-tax-pct" data-tax-dependent data-tax-settings hidden disabled>
+                      <option value="0" selected>None</option>
+                      <option value="8">8 %</option>
+                      <option value="9">9 %</option>
+                    </select>
+                    <small data-tax-settings hidden>Simplified sale simulation on each chart date: equity ETFs with 30% partial exemption; Bitcoin and gold held for less than one year, and real estate held for less than ten years, use the personal rate. This is not tax advice.</small>
+                  </div>
+                </div>
+              </details>
+            </div>
+          </fieldset>
+        </div>
+
+        <div class="asset-backtester__comparison-toolbar">
+          <div class="asset-backtester__intervals" role="group" aria-label="Time range for overall comparison" id="comparison-intervals"></div>
+          <div class="asset-backtester__custom-dates" id="comparison-custom-dates" hidden>
+            <label>From <input type="date" id="comparison-start"></label>
+            <label>Bis <input type="date" id="comparison-end"></label>
+            <button type="button" id="apply-custom-range">Apply range</button>
+            <div class="asset-backtester__date-slider" data-date-slider>
+            <div class="asset-backtester__date-slider-head">
+                <span>Set period with slider</span>
+                <output data-range-output></output>
+              </div>
+              <div class="asset-backtester__date-slider-control">
+                <div class="asset-backtester__date-slider-track" aria-hidden="true"><span data-range-fill></span></div>
+                <input class="asset-backtester__date-slider-input" type="range" data-range-start aria-label="Start date for overall comparison">
+                <input class="asset-backtester__date-slider-input" type="range" data-range-end aria-label="End date for overall comparison">
+              </div>
+              <div class="asset-backtester__date-slider-bounds" aria-hidden="true">
+                <span data-range-min-label></span>
+                <span data-range-max-label></span>
+              </div>
+            </div>
+          </div>
+        </div>
+              <p class="asset-backtester__real-return-status" id="real-return-status">Nominal return | no inflation adjustment</p>
+
+        <div class="asset-backtester__notice" id="comparison-warning" hidden>
+          <span></span>
+          <button type="button" id="use-common-start" hidden>Use common start</button>
+        </div>
+
+        <div class="asset-backtester__chart-frame asset-backtester__chart-frame--comparison">
+          <div class="asset-backtester__skeleton" aria-hidden="true"></div>
+          <canvas id="chart-comparison" aria-label="Comparison of stocks, Bitcoin, gold and real estate normalised to the same starting capital, with optional price-only lines" role="img"></canvas>
+          <div class="asset-backtester__chart-state" id="comparison-chart-state" hidden></div>
+        </div>
+        <p class="asset-backtester__chart-summary sr-only" id="comparison-chart-summary"></p>
+      </div>
+    </section>
+
+    <section class="asset-backtester__section" aria-labelledby="metrics-title">
+      <div class="asset-backtester__section-head">
+        <div>
+          <p class="asset-backtester__section-label">Results</p>
+          <h2 id="metrics-title">Metrics for the selected backtest</h2>
+        </div>
+        <p id="metrics-period">Loading period</p>
+      </div>
+      <div class="asset-backtester__table-scroll asset-backtester__table-scroll--metrics" tabindex="0">
+        <table class="asset-backtester__table asset-backtester__metrics" id="metrics-table">
+          <caption class="sr-only">Result metrics for the selected asset classes</caption>
+          <thead>
+            <tr>
+              <th scope="col">Asset</th>
+              <th scope="col" aria-sort="none"><button type="button" class="asset-backtester__rank-header" data-result-rank="finalValue">Ending value <span data-rank-indicator aria-hidden="true"></span></button></th>
+              <th scope="col" aria-sort="none"><button type="button" class="asset-backtester__rank-header" data-result-rank="absoluteReturn">Gain / loss <span data-rank-indicator aria-hidden="true"></span></button></th>
+              <th scope="col" aria-sort="none"><button type="button" class="asset-backtester__rank-header" data-result-rank="totalReturnPct">Total return <span data-rank-indicator aria-hidden="true"></span></button></th>
+              <th scope="col" aria-sort="none"><button type="button" class="asset-backtester__rank-header" data-result-rank="cagrPct">CAGR <span data-rank-indicator aria-hidden="true"></span></button></th>
+              <th scope="col" data-tax-column hidden>Model tax</th>
+              <th scope="col" aria-sort="none"><button type="button" class="asset-backtester__rank-header" data-result-rank="maxDrawdownPct">Max. Drawdown <span data-rank-indicator aria-hidden="true"></span></button></th>
+              <th scope="col">Last observed value</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+      <div class="asset-backtester__metrics-head">
+        <h3>Risk and daily distribution</h3>
+        <p>Calculated from consecutive source observations. When taxes are enabled, changes in tax status, including completed holding periods, also affect the net path.</p>
+      </div>
+      <div class="asset-backtester__table-scroll asset-backtester__table-scroll--metrics" tabindex="0">
+        <table class="asset-backtester__table asset-backtester__metrics asset-backtester__metrics--risk" id="risk-metrics-table">
+          <caption class="sr-only">Risk and daily metrics for the selected asset classes</caption>
+          <thead>
+            <tr>
+              <th scope="col">Asset</th>
+              <th scope="col" aria-sort="none"><button type="button" class="asset-backtester__rank-header" data-result-rank="annualizedVolatilityPct"><abbr title="Annualised standard deviation of observed period returns">Volatility p.a.</abbr> <span data-rank-indicator aria-hidden="true"></span></button></th>
+              <th scope="col" aria-sort="none"><button type="button" class="asset-backtester__rank-header" data-result-rank="sharpeRatio"><abbr title="Annualised average return divided by volatility, risk-free rate 0 percent">Sharpe (0%)</abbr> <span data-rank-indicator aria-hidden="true"></span></button></th>
+              <th scope="col" aria-sort="none"><button type="button" class="asset-backtester__rank-header" data-result-rank="calmarRatio"><abbr title="CAGR divided by maximum drawdown">Calmar</abbr> <span data-rank-indicator aria-hidden="true"></span></button></th>
+              <th scope="col" aria-sort="none"><button type="button" class="asset-backtester__rank-header" data-result-rank="bestDayPct">Best period <span data-rank-indicator aria-hidden="true"></span></button></th>
+              <th scope="col" aria-sort="none"><button type="button" class="asset-backtester__rank-header" data-result-rank="worstDayPct">Worst period <span data-rank-indicator aria-hidden="true"></span></button></th>
+              <th scope="col" aria-sort="none"><button type="button" class="asset-backtester__rank-header" data-result-rank="positiveDaysPct">Positive periods <span data-rank-indicator aria-hidden="true"></span></button></th>
+              <th scope="col" aria-sort="none"><button type="button" class="asset-backtester__rank-header" data-result-rank="observedReturnCount">Observations <span data-rank-indicator aria-hidden="true"></span></button></th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="asset-backtester__section asset-backtester__section--portfolio" aria-label="Portfolio builder">
+      <div id="portfolio-lab" class="portfolio-lab" aria-label="Build and model portfolios"></div>
+    </section>
+
+    <aside class="asset-backtester__method-note">
+      <span aria-hidden="true">i</span>
+        <p>The backtester uses historical closing and reference values. Dividends remain separate from price indices. Net rental cash flow applies only to the individual real-estate series. TER and taxes are off by default and are included and shown only after activation in Settings. <strong>Past performance is not a reliable indicator of future results.</strong></p>
+    </aside>
+
+    <section class="asset-backtester__section asset-backtester__section--method" aria-labelledby="method-title">
+      <div class="asset-backtester__section-head">
+        <div>
+          <p class="asset-backtester__section-label">Transparency</p>
+          <h2 id="method-title">Methodology, sources and data status</h2>
+        </div>
+      </div>
+      <details class="asset-backtester__details" open>
+        <summary>How the comparison is calculated</summary>
+        <div class="asset-backtester__details-body">
+                <p>For each asset, units are calculated at the value on the common start date. Bitcoin and gold follow <code>starting capital × value(t) / value(start)</code>. For the S&amp;P 500, MSCI World, DAX and EURO STOXX 50, the price index remains visible as its own line. A second line shows the corresponding value including price growth and reinvested dividends. Only total return and portfolio value use this second calculation.</p>
+          <div class="asset-backtester__formula"><span>Portfolio value(t)</span><strong>= starting capital × value(t) / value(start)</strong></div>
+          <div class="asset-backtester__formula"><span>S&amp;P dividend factor</span><strong>= product of (1 + monthly return)<sup>calendar days / 365.2425</sup></strong></div>
+          <div class="asset-backtester__formula"><span>MSCI World dividend factor</span><strong>= product of (1 + annual return) on each 31 December</strong></div>
+          <div class="asset-backtester__formula"><span>DAX and EURO STOXX 50 dividend factor</span><strong>= product of (1 + annual return) on each 31 December</strong></div>
+          <div class="asset-backtester__formula"><span>Real-estate value(t)</span><strong>= starting capital × price index(t) / price index(start) + starting capital × net cash flow p.a. × calendar days / 365.2425</strong></div>
+          <div class="asset-backtester__formula"><span>Real comparison value(t)</span><strong>= nominal comparison value(t) ÷ inflation index(t) × inflation index(start)</strong></div>
+          <div class="asset-backtester__formula"><span>Value after TER</span><strong>= value before costs × (1 − TER)<sup>calendar days / 365.2425</sup></strong></div>
+          <div class="asset-backtester__formula"><span>Overall comparison after tax</span><strong>= hypothetical sale proceeds(t) − modelled tax(t), then inflation-adjusted</strong></div>
+                <p>Multpl publishes annualised dividend yield as the 12-month dividend per share divided by price. For the S&amp;P 500, the backtester allocates this value pro rata up to each calendar date and assumes reinvestment. For the MSCI World, DAX and EURO STOXX 50, the full annual value is credited on 31 December. For the EURO STOXX 50, the historical net dividend factor uses an accumulating UCITS ETF proxy because an official SX5T history is not freely available. Daily risk metrics still use only real price observations.</p>
+           <p>Net rental cash flow is a freely adjustable model assumption after ongoing property costs. The default is 5.0% for the USA and 3.0% for Germany. It is calculated only in the respective individual series on the original starting capital, held as cash and not reinvested. Financing, purchase costs, selling costs and personal taxes must already be reflected in the inputs.</p>
+           <p>For real returns, the backtester divides each nominal portfolio value by the change in the selected consumer price index since the start date. Available choices are HICP for Germany and the euro area, US CPI-U and a constant custom annual rate. Monthly inflation values are carried forward until the next official observation.</p>
+           <p>TER is disabled by default and modelled as a constant annual cost only after explicit activation. It can be used for each individual series and uniformly across all lines in the overall comparison. This also applies to Bitcoin, gold and real estate if a fund, ETF, ETC or ETP product is being represented. The prefilled values are adjustable model assumptions. A series based on a fund proxy may already include ongoing product costs in its history; an additional TER input is therefore a conservative extra charge.</p>
+           <p>The tax model in the overall comparison calculates an independent full sale on every chart date. Settings include available savings allowance, general capital losses, private-sale losses, other §23 gains, personal marginal tax rate, church tax, optional personal-income Soli and the tax treatment of each investment. The detailed breakdown shows the selected date, gross gain, exemptions, offsets, taxable income and each tax component. Taxes reduce chart performance and result metrics. They are never deducted recursively every day. Current German rules are applied to historical dates as a simplified sale-only model. No ongoing distribution or interest taxes, advance lump sum, foreign treaty / withholding taxes or fund transition rules before 2018 are simulated. Details appear when you enable the model.</p>
+          <p>The global tax switch also applies to saved and completed portfolios, their individual charts and the 60/40 reference. Portfolio sales use FIFO acquisition lots and one shared annual tax calculation with separate capital and private-sale loss pools. Actual tax payments from rebalancing reduce reinvestable capital. The remaining positions are sold only hypothetically on each chart date. The detailed overview separates tax already paid, additional final-sale tax, total tax and lost reinvestment. Portfolio allocation rules and optimisation remain before personal taxes. Period buttons rebase a chart excerpt to EUR 10,000 without resetting acquisition dates or tax history.</p>
+           <p>Volatility, Sharpe ratio and period statistics use observed changes; when the tax model is enabled, tax-status changes are included as well. Daily market series are annualised with 252 periods, Bitcoin with 365.2425, the US real-estate index with 12 and the German real-estate index with 4 periods per year. The backtester sets the risk-free rate to 0% for the Sharpe ratio.</p>
+ <p><a class="asset-backtester__knowledge-link" href="/en/knowledge/asset-class-backtester-return-risk">The knowledge article explains the data series, calculations and limitations of the backtest in detail.</a></p>
+        </div>
+      </details>
+      <details class="asset-backtester__details">
+        <summary>Data series and limitations</summary>
+        <div class="asset-backtester__source-grid" id="source-grid">
+          <p class="asset-backtester__muted">Loading source metadata.</p>
+        </div>
+      </details>
+    </section>
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <a href="../../" class="footer-logo">sms<span>.</span></a>
+        <p>Finance tools, dashboards and programming projects by Simon Stark.</p>
+      </div>
+      <div class="footer-col">
+        <h5>Navigation</h5>
+        <ul>
+<li><a href="/en/projects/">Projects</a></li>
+<li><a href="/en/downloads">Downloads</a></li>
+<li><a href="/en/project-pipeline">Project pipeline</a></li>
+<li><a href="/en/vision">Vision</a></li>
+<li><a href="/en/knowledge/">Knowledge</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h5>Legal</h5>
+        <ul>
+          <li><a href="/en/legal-notice">Legal notice</a></li>
+          <li><a href="/en/privacy">Privacy</a></li>
+        </ul>
+      </div>
+    </div>
+     <div class="footer-bottom">
+      <span>© 2026 Simon Stark</span>
+      <a href="https://github.com/simons-0427" target="_blank" rel="noopener noreferrer">github.com/simons-0427</a>
+    </div>
+  </footer>
+</body>
+</html>

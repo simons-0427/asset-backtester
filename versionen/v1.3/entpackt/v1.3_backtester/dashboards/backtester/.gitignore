@@ -1,0 +1,9 @@
+/config/backtester.php
+/logs/*
+!/logs/.gitkeep
+/var/import/*
+!/var/import/.gitkeep
+.env
+.env.*
+!.env.example
+

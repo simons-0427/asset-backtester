@@ -1,0 +1,66 @@
+{
+  "runtime": "v24.18.0",
+  "source": "Actual local CSV imports without dividend model. Serial single-run comparison, identical 500-search budget. No production timing.",
+  "results": [
+    {
+      "profile": "13 Anlageklassen, Buy & Hold, CAGR",
+      "days": 3653,
+      "riskFrequency": "quarterly",
+      "candidates": 594,
+      "uniqueEvaluations": 320,
+      "duplicates": 218,
+      "oldMs": 10090,
+      "newMs": 152,
+      "speedup": 66.36,
+      "oldObjective": 12.06020371998575,
+      "newObjective": 12.06020371998575,
+      "sameWeights": true,
+      "rulesPassed": true
+    },
+    {
+      "profile": "13 Anlageklassen, monatliches Rebalancing, Sharpe, Hebel/Kosten",
+      "days": 3653,
+      "riskFrequency": "quarterly",
+      "candidates": 594,
+      "uniqueEvaluations": 420,
+      "duplicates": 95,
+      "oldMs": 13234,
+      "newMs": 329,
+      "speedup": 40.22,
+      "oldObjective": 2.0183529243653133,
+      "newObjective": 2.0183529243653133,
+      "sameWeights": true,
+      "rulesPassed": true
+    },
+    {
+      "profile": "5 liquide Anlageklassen, tägliches Risikoraster, CAGR",
+      "days": 3653,
+      "riskFrequency": "daily",
+      "candidates": 518,
+      "uniqueEvaluations": 383,
+      "duplicates": 117,
+      "oldMs": 9194,
+      "newMs": 605,
+      "speedup": 15.2,
+      "oldObjective": 12.787428782054855,
+      "newObjective": 12.787428782054855,
+      "sameWeights": true,
+      "rulesPassed": true
+    },
+    {
+      "profile": "5 Anlageklassen, Gewichtsband, Sharpe und zusätzliche Risikoregeln",
+      "days": 3653,
+      "riskFrequency": "daily",
+      "candidates": 518,
+      "uniqueEvaluations": 302,
+      "duplicates": 210,
+      "oldMs": 7769,
+      "newMs": 499,
+      "speedup": 15.56,
+      "oldObjective": 6.446833075451643,
+      "newObjective": 6.446833075451643,
+      "sameWeights": true,
+      "rulesPassed": true
+    }
+  ]
+}

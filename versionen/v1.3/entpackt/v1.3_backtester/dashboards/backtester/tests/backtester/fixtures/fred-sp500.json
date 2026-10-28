@@ -1,0 +1,24 @@
+{
+  "realtime_start": "2026-08-05",
+  "realtime_end": "2026-08-05",
+  "observations": [
+    {
+      "realtime_start": "2026-08-05",
+      "realtime_end": "2026-08-05",
+      "date": "2026-08-04",
+      "value": "6395.50"
+    },
+    {
+      "realtime_start": "2026-08-05",
+      "realtime_end": "2026-08-05",
+      "date": "2026-08-03",
+      "value": "6375.25"
+    },
+    {
+      "realtime_start": "2026-08-05",
+      "realtime_end": "2026-08-05",
+      "date": "2026-08-02",
+      "value": "."
+    }
+  ]
+}

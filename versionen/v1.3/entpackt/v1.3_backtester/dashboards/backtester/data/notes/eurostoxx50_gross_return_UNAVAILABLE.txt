@@ -1,0 +1,3 @@
+SX5GT is a licensed STOXX total-return index.
+Free legal daily history was not obtained on 2026-08-20.
+Do not treat the accumulating ETF proxy as gross return.

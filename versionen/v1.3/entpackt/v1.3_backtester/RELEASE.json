@@ -1,0 +1,19 @@
+{
+  "version": "1.3",
+  "sourceDate": "2026-10-28",
+  "frontend": "v1.3z",
+  "portfolioEngine": "v1.3y",
+  "defaults": {
+    "alternativesPct": 30,
+    "alternativePositionPct": 10,
+    "maxDrawdownPct": 25,
+    "volatilityEnabled": false,
+    "rebalancing": "none",
+    "initialAmountEUR": 10000
+  },
+  "tests": {
+    "browserLogic": 172,
+    "productionDatabaseTest": false
+  },
+  "configuration": "Operator credentials are not included. Use the supplied examples."
+}

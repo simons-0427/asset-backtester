@@ -1,0 +1,7 @@
+Inflation is not added to nominal returns.
+real_growth_factor = nominal_growth_factor / inflation_index_factor
+real_return = real_growth_factor - 1
+Do not create a synthetic daily inflation path. Use month-end index levels only.
+Default personal EUR purchasing-power series for this backtester: German HICP (prc_hicp_minr, TOTAL, I25).
+Euro-area HICP and US CPI-U are optional comparison series.
+FOMC projections are PCE, not CPI, and must stay labeled PCE.

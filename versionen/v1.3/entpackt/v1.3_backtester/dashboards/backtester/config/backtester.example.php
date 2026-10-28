@@ -1,0 +1,132 @@
+<?php
+
+declare(strict_types=1);
+
+/*
+ * Copy this file to config/backtester.php and fill in the operator values.
+ * Keep the real file outside version control. Environment variables override
+ * the most sensitive values and are preferred when the host supports them.
+ */
+return [
+    'app' => [
+        'environment' => getenv('BACKTESTER_ENV') ?: 'production',
+        'timezone' => 'Europe/Berlin',
+        'public_base_url' => getenv('BACKTESTER_PUBLIC_BASE_URL') ?: 'https://smstark-projekt.de/dashboards/backtester',
+        'max_assets_per_request' => 13,
+        'max_range_days' => 14610,
+        'min_amount' => 100.0,
+        'max_amount' => 10000000.0,
+        'default_net_rental_cashflow_pct' => 5.0,
+        'default_de_net_rental_cashflow_pct' => 3.0,
+        'min_net_rental_cashflow_pct' => 0.0,
+        'max_net_rental_cashflow_pct' => 15.0,
+    ],
+    'database' => [
+        'host' => getenv('BACKTESTER_DB_HOST') ?: '127.0.0.1',
+        'port' => (int) (getenv('BACKTESTER_DB_PORT') ?: 3306),
+        'name' => getenv('BACKTESTER_DB_NAME') ?: 'backtester',
+        'username' => getenv('BACKTESTER_DB_USER') ?: 'backtester',
+        'password' => getenv('BACKTESTER_DB_PASSWORD') ?: '',
+        'charset' => 'utf8mb4',
+    ],
+    'providers' => [
+        'fred' => [
+            'base_url' => 'https://api.stlouisfed.org/fred/series/observations',
+            'api_key' => getenv('BACKTESTER_FRED_API_KEY') ?: '',
+            'timeout_seconds' => 20,
+            'max_retries' => 3,
+            'retry_base_ms' => 500,
+            'backfill_chunk_days' => 7300,
+            'live_updates_from' => '2026-08-03',
+            'real_estate_revision_lookback_days' => 450,
+        ],
+        'alpha_vantage' => [
+            'base_url' => 'https://www.alphavantage.co/query',
+            'api_key' => getenv('BACKTESTER_ALPHA_VANTAGE_API_KEY') ?: '',
+            'timeout_seconds' => 20,
+            'max_retries' => 3,
+            'retry_base_ms' => 500,
+            'backfill_chunk_days' => 7300,
+            'live_updates_from' => '2026-08-03',
+        ],
+        'goldapi' => [
+            'base_url' => 'https://www.goldapi.io/api',
+            'api_key' => getenv('BACKTESTER_GOLDAPI_API_KEY') ?: '',
+            'timeout_seconds' => 20,
+            'max_retries' => 3,
+            'retry_base_ms' => 500,
+            'backfill_chunk_days' => 30,
+            'recent_window_days' => 3,
+            'gld_xau_ratio' => 0.091772975488,
+            'calibration_reference_date' => '2026-08-07',
+            'live_updates_from' => '2026-08-08',
+        ],
+        'coingecko' => [
+            'base_url' => getenv('BACKTESTER_COINGECKO_BASE_URL') ?: 'https://api.coingecko.com/api/v3',
+            'api_key' => getenv('BACKTESTER_COINGECKO_API_KEY') ?: '',
+            'api_key_header' => getenv('BACKTESTER_COINGECKO_KEY_HEADER') ?: 'x-cg-demo-api-key',
+            'timeout_seconds' => 20,
+            'max_retries' => 3,
+            'retry_base_ms' => 500,
+            'backfill_chunk_days' => 365,
+        ],
+        'csv' => [
+            'directory' => dirname(__DIR__) . '/var/import',
+            'backfill_chunk_days' => 7300,
+        ],
+        'fred_csv' => [
+            'base_url' => 'https://fred.stlouisfed.org/graph/fredgraph.csv',
+            'revision_lookback_days' => 450,
+            'timeout_seconds' => 15,
+            'max_retries' => 0,
+            'retry_base_ms' => 500,
+            'prefer_php_stream' => true,
+        ],
+        'msci_world' => [
+            // Automated use has been confirmed by the operator. An environment
+            // variable can still disable the provider without editing this file.
+            'enabled' => filter_var(getenv('BACKTESTER_MSCI_WORLD_SCRAPER_ENABLED') ?: 'false', FILTER_VALIDATE_BOOL),
+            'url_template' => 'https://query1.finance.yahoo.com/v8/finance/chart/%s',
+            'timeout_seconds' => 20,
+            'max_retries' => 2,
+            'retry_base_ms' => 750,
+        ],
+        'multpl_dividend_yield' => [
+            'enabled' => true,
+            'url' => 'https://www.multpl.com/s-p-500-dividend-yield/table/by-month',
+            'source_slug' => 'multpl-sp500-dividend-yield',
+            'backfill_from' => '2016-07-01',
+            'recent_months' => 3,
+            'timeout_seconds' => 20,
+            'max_retries' => 2,
+            'retry_base_ms' => 750,
+        ],
+    ],
+    'sync' => [
+        'page_visit_sync_enabled' => false,
+        'overlap_days' => 10,
+        'lock_seconds' => 180,
+        'page_visit_max_assets' => 3,
+        'page_visit_rate_limit' => 12,
+        'page_visit_rate_window_minutes' => 15,
+        'success_check_delay_hours' => 18,
+        'monthly_check_interval_days' => 7,
+        'quarterly_check_interval_days' => 30,
+        'failure_backoff_max_hours' => 48,
+        'daily_failure_backoff_max_hours' => 24,
+        'log_file' => dirname(__DIR__) . '/logs/backtester.log',
+    ],
+    'security' => [
+        'cron_secret' => getenv('BACKTESTER_CRON_SECRET') ?: '',
+        'allowed_origin' => getenv('BACKTESTER_ALLOWED_ORIGIN') ?: 'https://smstark-projekt.de',
+    ],
+    'features' => [
+        'inflation' => false,
+        'transaction_costs' => false,
+        'taxes' => false,
+        'recurring_investments' => false,
+        'real_estate' => true,
+        'magnificent_seven' => false,
+        'dividend_adjustments' => true,
+    ],
+];

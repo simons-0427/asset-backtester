@@ -1,0 +1,16 @@
+<!DOCTYPE html><html><head>
+  <meta charset="UTF-8">
+  <base href="/">
+  <title>Open Knowledge Repository</title>
+  <meta name="viewport" content="width=device-width,minimum-scale=1">
+  <meta http-equiv="cache-control" content="no-store">
+<style>@charset "UTF-8";:root{--swiper-theme-color:#007aff}:root{--swiper-navigation-size:44px}</style><link rel="stylesheet" href="styles.e0f3b23f6448505d.css" media="print" onload="this.media='all'"><noscript><link rel="stylesheet" href="styles.e0f3b23f6448505d.css"></noscript><script id="hashed-file-mapping" type="application/json">{"assets/config.json":"assets/config.0bbf38272b3a15b2a1093ebfc4b88ec0.json","client-series-rtl-theme.css":"client-series-rtl-theme.88dcfb0fe4c833eedd339a34d3cfd61d.css","client-series-theme.css":"client-series-theme.88dcfb0fe4c833eedd339a34d3cfd61d.css","client-journals-rtl-theme.css":"client-journals-rtl-theme.88dcfb0fe4c833eedd339a34d3cfd61d.css","client-journals-theme.css":"client-journals-theme.88dcfb0fe4c833eedd339a34d3cfd61d.css","client-rtl-theme.css":"client-rtl-theme.c262b7b694d5937e3441ea6f460976a8.css","client-theme.css":"client-theme.039c3c103b374dd51c0fd00153b93f4d.css","atmire-theme.css":"atmire-theme.f82d2fe252954feaa77ce763dd3541c2.css"}</script><link rel="preload" as="fetch" href="assets/config.0bbf38272b3a15b2a1093ebfc4b88ec0.json" crossorigin="anonymous" class="hfm"><link rel="prefetch" as="style" href="client-series-rtl-theme.88dcfb0fe4c833eedd339a34d3cfd61d.css" class="hfm"><link rel="prefetch" as="style" href="client-series-theme.88dcfb0fe4c833eedd339a34d3cfd61d.css" class="hfm"><link rel="prefetch" as="style" href="client-journals-rtl-theme.88dcfb0fe4c833eedd339a34d3cfd61d.css" class="hfm"><link rel="prefetch" as="style" href="client-journals-theme.88dcfb0fe4c833eedd339a34d3cfd61d.css" class="hfm"><link rel="prefetch" as="style" href="client-rtl-theme.c262b7b694d5937e3441ea6f460976a8.css" class="hfm"><link rel="prefetch" as="style" href="client-theme.039c3c103b374dd51c0fd00153b93f4d.css" class="hfm"><link rel="prefetch" as="style" href="atmire-theme.f82d2fe252954feaa77ce763dd3541c2.css" class="hfm"></head>
+
+<body>
+  <ds-app></ds-app>
+<script src="runtime.0ee63f9c5737f65f.js" type="module"></script><script src="polyfills.3c346670727b9f8b.js" type="module"></script><script src="main.2a889fc9037434a1.js" type="module"></script>
+
+
+
+
+</body></html>

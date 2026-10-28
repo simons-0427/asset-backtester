@@ -1,0 +1,3 @@
+share_class,as_of_date,ytm_pct,effective_duration,avg_coupon_pct,ter_pct,oas_bps,currency_hedge,source_url,note
+IE00BDBRDM35_EUR_hedged_acc,2026-08-12,4.00,6.05,3.06,0.10,,EUR_hedged,https://www.ishares.com/uk/individual/en/products/291770/ishares-core-global-aggregate-bond-ucits-etf,"Point-in-time characteristics, not a daily history. OAS was not published as a free downloadable series."
+IE00B3F81409_USD_unhedged_dist,2026-08-18,4.03,6.01,3.06,0.10,,unhedged,https://www.ishares.com/uk/individual/en/products/291773/ishares-core-global-aggregate-bond-ucits-etf,Point-in-time characteristics. Distributing share class; total return uses adjusted close.

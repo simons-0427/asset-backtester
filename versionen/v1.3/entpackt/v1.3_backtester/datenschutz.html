@@ -1,0 +1,976 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" type="image/svg+xml" href="images/favicons/favicon-1g-dotgrid.svg">
+  <link rel="icon" type="image/png" sizes="32x32" href="images/favicons/favicon-1g-dotgrid-32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="images/favicons/favicon-1g-dotgrid-16.png">
+  <link rel="shortcut icon" href="images/favicons/favicon-1g-dotgrid.ico">
+  <link rel="apple-touch-icon" sizes="64x64" href="images/favicons/favicon-1g-dotgrid-64.png">
+  <title>Datenschutzerklärung | smstark-projekt.de</title>
+  <meta name="robots" content="index, follow">
+  <meta name="author" content="Simon Stark">
+  <meta name="theme-color" content="#0c0c0f">
+  <meta name="description" content="Datenschutz auf smstark-projekt.de: Informationen zu Hosting, Kontaktformular, lokaler Speicherung, externen Diensten und Ihren Rechten.">
+  <link rel="canonical" href="https://smstark-projekt.de/datenschutz">
+  <meta property="og:type" content="website">
+  <meta property="og:locale" content="de_DE">
+   <meta property="og:site_name" content="Simon Stark">
+  <meta property="og:url" content="https://smstark-projekt.de/datenschutz">
+  <meta property="og:title" content="Datenschutzerklärung | smstark-projekt.de">
+  <meta property="og:description" content="Informationen zu Hosting, Kontaktformular, lokaler Speicherung, externen Diensten und Ihren Datenschutzrechten.">
+  <meta property="og:image" content="https://smstark-projekt.de/images/website-home-menu.png">
+  <meta property="og:image:alt" content="Startseite des Portfolios von Simon Stark">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Datenschutzerklärung | smstark-projekt.de">
+  <meta name="twitter:description" content="Informationen zu Hosting, Kontaktformular, lokaler Speicherung, externen Diensten und Ihren Datenschutzrechten.">
+  <meta name="twitter:image" content="https://smstark-projekt.de/images/website-home-menu.png">
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "WebPage",
+        "@id": "https://smstark-projekt.de/datenschutz#webpage",
+        "url": "https://smstark-projekt.de/datenschutz",
+        "name": "Datenschutzerklärung | smstark-projekt.de",
+        "description": "Informationen zu Hosting, Kontaktformular, lokaler Speicherung, externen Diensten und Datenschutzrechten.",
+        "inLanguage": "de-DE",
+        "isPartOf": { "@id": "https://smstark-projekt.de/#website" },
+        "publisher": { "@id": "https://smstark-projekt.de/#person" },
+        "breadcrumb": { "@id": "https://smstark-projekt.de/datenschutz#breadcrumb" }
+      },
+      {
+        "@type": "BreadcrumbList",
+        "@id": "https://smstark-projekt.de/datenschutz#breadcrumb",
+        "itemListElement": [
+          {
+            "@type": "ListItem",
+            "position": 1,
+            "name": "Startseite",
+            "item": "https://smstark-projekt.de/"
+          },
+          {
+            "@type": "ListItem",
+            "position": 2,
+            "name": "Datenschutzerklärung",
+            "item": "https://smstark-projekt.de/datenschutz"
+          }
+        ]
+      }
+    ]
+  }
+  </script>
+  <style>
+    :root {
+      --bg: #0c0c0f;
+      --surface: #171717;
+      --card: #1c1c1c;
+      --border: #363636;
+      --accent: #6ee7b7;
+      --text: #e2e8f0;
+      --muted: #b5bdc9;
+      --warning: #fbbf24;
+    }
+    *, *::before, *::after { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      color: var(--text);
+      background: var(--bg);
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      font-size: 16px;
+      line-height: 1.7;
+    }
+    a { color: var(--accent); text-underline-offset: .18em; }
+    a:hover { color: #a7f3d0; }
+    a:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; border-radius: 3px; }
+    .topbar {
+      border-bottom: 1px solid var(--border);
+      background: rgba(12, 12, 15, .96);
+    }
+    .topbar-inner {
+      width: min(1100px, calc(100% - 2rem));
+      min-height: 68px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1.5rem;
+    }
+    .logo {
+      color: var(--text);
+      font-size: 1.35rem;
+      font-weight: 800;
+      letter-spacing: -.04em;
+      text-decoration: none;
+    }
+    .logo span { color: var(--accent); }
+    nav { display: flex; flex-wrap: wrap; gap: 1rem; }
+    nav a { color: var(--muted); font-size: .9rem; text-decoration: none; }
+    nav a[aria-current="page"] { color: var(--accent); }
+    main {
+      width: min(1100px, calc(100% - 2rem));
+      margin: 0 auto;
+      padding: clamp(3.5rem, 8vw, 7rem) 0 5rem;
+    }
+    .eyebrow {
+      margin: 0 0 .75rem;
+      color: var(--accent);
+      font-size: .75rem;
+      font-weight: 700;
+      letter-spacing: .16em;
+      text-transform: uppercase;
+    }
+    h1 {
+      max-width: 850px;
+      margin: 0;
+      font-size: clamp(2.4rem, 7vw, 5rem);
+      line-height: 1.02;
+      letter-spacing: -.05em;
+    }
+    .intro {
+      max-width: 760px;
+      margin: 1.4rem 0 0;
+      color: var(--muted);
+      font-size: 1.05rem;
+    }
+    .draft-warning {
+      margin: 2rem 0;
+      padding: 1rem 1.1rem;
+      border: 1px solid rgba(251, 191, 36, .5);
+      border-radius: 10px;
+      background: rgba(251, 191, 36, .08);
+      color: #fde68a;
+    }
+    .layout {
+      display: grid;
+      grid-template-columns: 240px minmax(0, 1fr);
+      gap: clamp(2rem, 6vw, 5rem);
+      align-items: start;
+      margin-top: 3rem;
+    }
+    .toc {
+      position: sticky;
+      top: 1.5rem;
+      padding: 1.1rem;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      background: var(--surface);
+    }
+    .toc strong { display: block; margin-bottom: .7rem; font-size: .85rem; }
+    .toc ol { margin: 0; padding-left: 1.25rem; }
+    .toc li + li { margin-top: .35rem; }
+    .toc a { color: var(--muted); font-size: .82rem; text-decoration: none; }
+    article { min-width: 0; }
+    section {
+      padding: 0 0 2.2rem;
+      border-bottom: 1px solid var(--border);
+      scroll-margin-top: 1.5rem;
+    }
+    section + section { padding-top: 2.2rem; }
+    h2 { margin: 0 0 .9rem; font-size: clamp(1.35rem, 3vw, 1.8rem); line-height: 1.25; }
+    h3 { margin: 1.35rem 0 .45rem; font-size: 1.05rem; }
+    p { margin: .6rem 0; }
+    ul { margin: .6rem 0; padding-left: 1.35rem; }
+    li + li { margin-top: .35rem; }
+    address { font-style: normal; }
+    code {
+      padding: .12rem .35rem;
+      border: 1px solid var(--border);
+      border-radius: 5px;
+      color: #a7f3d0;
+      background: var(--surface);
+      font-size: .88em;
+    }
+    .muted { color: var(--muted); }
+    .placeholder {
+      display: inline-block;
+      padding: .05rem .35rem;
+      border-radius: 4px;
+      color: #111827;
+      background: var(--warning);
+      font-weight: 750;
+    }
+    @media (max-width: 760px) {
+      .topbar-inner { align-items: flex-start; flex-direction: column; padding: 1rem 0; }
+      .layout { grid-template-columns: 1fr; }
+      .toc { position: static; }
+    }
+    @media print {
+      body { color: #111; background: #fff; }
+      .topbar, .toc, footer, .draft-warning { display: none; }
+      main { width: 100%; padding: 0; }
+      .layout { display: block; }
+      section { border-color: #ccc; }
+      a { color: inherit; }
+    }
+  </style>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+  <style>
+:root {
+  --bg: #0c0c0f;
+  --surface: #13131a;
+  --border: #1e1e2e;
+  --accent: #6ee7b7;
+  --accent2: #818cf8;
+  --text: #e2e8f0;
+  --muted: #64748b;
+  --card: #16161f;
+  --nav-h: 68px;
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: calc(var(--nav-h) + 1.5rem);
+}
+
+body.legal-page {
+  min-height: 100vh;
+  overflow-x: hidden;
+  color: var(--text);
+  background:
+    radial-gradient(circle at 78% 7%, rgba(110, 231, 183, .075), transparent 26rem),
+    radial-gradient(circle at 18% 28%, rgba(129, 140, 248, .055), transparent 30rem),
+    var(--bg);
+  font-family: "DM Sans", sans-serif;
+  font-size: 16px;
+  line-height: 1.7;
+}
+
+.legal-page a {
+  color: var(--text);
+  text-underline-offset: .18em;
+}
+
+.legal-page a:hover { color: #fff; }
+.legal-page a:focus-visible {
+  outline: 3px solid var(--accent);
+  outline-offset: 3px;
+  border-radius: 3px;
+}
+
+/* Hauptnavigation wie auf den übrigen Seiten */
+.main-nav {
+  position: fixed;
+  inset: 0 0 auto;
+  z-index: 100;
+  height: var(--nav-h);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2.2rem;
+  padding: 0 clamp(1.5rem, 5vw, 4rem);
+  border-bottom: 1px solid var(--border);
+  background: rgba(12, 12, 15, .85);
+  backdrop-filter: blur(18px);
+}
+
+.main-nav .nav-logo {
+  position: absolute;
+  left: clamp(1.5rem, 5vw, 4rem);
+  color: var(--text);
+  font-family: "Syne", sans-serif;
+  font-size: 1.3rem;
+  font-weight: 800;
+  letter-spacing: -.02em;
+  text-decoration: none;
+  margin-right: auto;
+}
+
+.main-nav .nav-logo span { color: var(--accent); }
+
+.main-nav .nav-links {
+  display: flex;
+  align-items: center;
+  gap: 2.2rem;
+  list-style: none;
+}
+
+.main-nav .nav-links a {
+  color: var(--text);
+  font-size: .875rem;
+  font-weight: 500;
+  text-decoration: none;
+  letter-spacing: .03em;
+  transition: color .2s;
+}
+
+.main-nav .nav-links a:hover,
+.main-nav .nav-links a.active {
+  color: var(--accent);
+}
+
+.nav-github {
+  position: absolute;
+  right: clamp(1.5rem, 5vw, 4rem);
+  display: inline-flex;
+  align-items: center;
+  gap: .5rem;
+  padding: .4rem .9rem;
+  border: 1px solid var(--text);
+  border-radius: 8px;
+  color: var(--text) !important;
+  font-size: .82rem;
+  font-weight: 500;
+  text-decoration: none;
+  transition: border-color .2s, color .2s;
+}
+
+.nav-github:hover {
+  border-color: var(--accent);
+  color: var(--accent) !important;
+}
+
+.nav-github svg {
+  width: 15px;
+  height: 15px;
+}
+
+.nav-toggle {
+  position: absolute;
+  right: clamp(1.5rem, 5vw, 4rem);
+  display: none;
+  width: 40px;
+  height: 40px;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: transparent;
+  cursor: pointer;
+  z-index: 101;
+  transition: border-color .2s;
+}
+
+.nav-toggle:hover { border-color: var(--accent); }
+
+.nav-toggle span {
+  width: 18px;
+  height: 2px;
+  border-radius: 2px;
+  background: var(--text);
+  transition: transform .25s ease, opacity .2s ease;
+}
+
+.nav-toggle.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+.nav-toggle.open span:nth-child(2) { opacity: 0; }
+.nav-toggle.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+.mobile-menu {
+  position: fixed;
+  top: var(--nav-h);
+  right: 0;
+  left: 0;
+  z-index: 102;
+  display: none;
+  max-height: 0;
+  overflow: hidden;
+  border-bottom: 1px solid var(--border);
+  background: rgba(12, 12, 15, .98);
+  backdrop-filter: blur(18px);
+  transition: max-height .3s ease;
+}
+
+.mobile-menu.open {
+  max-height: calc(100vh - var(--nav-h));
+  overflow-y: auto;
+}
+
+.mobile-menu ul {
+  padding: .4rem 1.5rem 1.4rem;
+  list-style: none;
+}
+
+.mobile-menu li + li { border-top: 1px solid var(--border); }
+
+.mobile-menu a {
+  display: flex;
+  align-items: center;
+  gap: .6rem;
+  padding: .95rem .2rem;
+  color: var(--text);
+  font-size: 1rem;
+  font-weight: 500;
+  text-decoration: none;
+  transition: color .2s;
+}
+
+.mobile-menu a:hover { color: var(--accent); }
+.mobile-menu .mobile-github { color: var(--accent); }
+.mobile-menu .mobile-github svg { width: 17px; height: 17px; }
+
+.mobile-menu-label {
+  margin-top: 1rem !important;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border);
+  color: var(--muted);
+  font-size: .68rem;
+  font-weight: 700;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+}
+
+/* Seitentitel und Inhalt */
+.legal-page main {
+  position: relative;
+  width: min(1180px, calc(100% - 3rem));
+  margin: 0 auto;
+  padding: calc(var(--nav-h) + clamp(3.8rem, 8vw, 7rem)) 0 6rem;
+}
+
+.legal-page .eyebrow {
+  margin: 0 0 .9rem;
+  color: var(--accent);
+  font-size: .72rem;
+  font-weight: 700;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+}
+
+.legal-page h1 {
+  max-width: 900px;
+  margin: 0;
+  color: var(--text);
+  font-family: "Syne", sans-serif;
+  font-size: clamp(2.7rem, 7vw, 5.3rem);
+  font-weight: 800;
+  line-height: 1.02;
+  letter-spacing: -.045em;
+}
+
+.legal-page h1::after {
+  content: ".";
+  color: var(--accent);
+}
+
+.legal-page .intro {
+  max-width: 760px;
+  margin: 1.25rem 0 0;
+  color: var(--muted);
+  font-size: 1.03rem;
+  font-weight: 300;
+}
+
+.draft-warning {
+  max-width: 900px;
+  margin: 2rem 0 0;
+  padding: 1rem 1.15rem;
+  border: 1px solid rgba(251, 191, 36, .28);
+  border-left: 3px solid #fbbf24;
+  border-radius: 8px;
+  color: #fde68a;
+  background: rgba(251, 191, 36, .055);
+  font-size: .88rem;
+}
+
+.layout {
+  display: grid;
+  grid-template-columns: 235px minmax(0, 1fr);
+  gap: clamp(2rem, 5vw, 4.5rem);
+  align-items: start;
+  margin-top: 3.5rem;
+}
+
+.toc {
+  position: sticky;
+  top: calc(var(--nav-h) + 1.5rem);
+  padding: 1.15rem 1.2rem;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: rgba(22, 22, 31, .82);
+  backdrop-filter: blur(12px);
+}
+
+.toc strong {
+  display: block;
+  margin-bottom: .75rem;
+  color: var(--text);
+  font-family: "Syne", sans-serif;
+  font-size: .78rem;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+
+.toc ol {
+  margin: 0;
+  padding-left: 1.2rem;
+}
+
+.toc li {
+  color: var(--muted);
+  font-size: .78rem;
+}
+
+.toc li + li { margin-top: .38rem; }
+.toc a { color: var(--muted) !important; text-decoration: none; }
+.toc a:hover { color: var(--text) !important; }
+
+.legal-page article { min-width: 0; }
+
+.legal-page article section {
+  padding: clamp(1.25rem, 3vw, 1.75rem);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: linear-gradient(145deg, rgba(22, 22, 31, .96), rgba(19, 19, 26, .96));
+  transition: border-color .2s, transform .2s;
+  scroll-margin-top: calc(var(--nav-h) + 1.5rem);
+}
+
+.legal-page article section:hover {
+  border-color: rgba(110, 231, 183, .42);
+}
+
+.legal-page article section + section {
+  margin-top: 1rem;
+  padding-top: clamp(1.25rem, 3vw, 1.75rem);
+}
+
+.legal-page h2 {
+  margin: 0 0 .8rem;
+  color: var(--text);
+  font-family: "Syne", sans-serif;
+  font-size: clamp(1.15rem, 2.5vw, 1.45rem);
+  font-weight: 700;
+  line-height: 1.3;
+}
+
+.legal-page h3 {
+  margin: 1.2rem 0 .4rem;
+  color: var(--text);
+  font-family: "Syne", sans-serif;
+  font-size: 1rem;
+}
+
+.legal-page p { margin: .55rem 0; }
+.legal-page ul { margin: .65rem 0; padding-left: 1.3rem; }
+.legal-page li + li { margin-top: .3rem; }
+.legal-page address { font-style: normal; }
+
+.legal-page code {
+  padding: .1rem .35rem;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  color: #a7f3d0;
+  background: var(--surface);
+  font-size: .87em;
+}
+
+.placeholder {
+  display: inline-block;
+  margin: .08rem 0;
+  padding: .03rem .35rem;
+  border-radius: 4px;
+  color: #17120a;
+  background: #fbbf24;
+  font-weight: 700;
+}
+
+/* Footer wie auf der Hauptseite */
+.legal-page footer {
+  --muted: #6f7e96;
+  padding: 3.5rem clamp(1.5rem, 8vw, 8rem) 2rem;
+  border-top: 1px solid var(--border);
+  color: var(--muted);
+  background: var(--surface);
+  font-size: .85rem;
+}
+
+.legal-page .footer-inner {
+  display: grid;
+  grid-template-columns: 1.7fr 1fr 1fr;
+  gap: 3rem;
+  padding-bottom: 2.5rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.footer-logo {
+  font-family: "Syne", sans-serif;
+  font-size: 1.3rem;
+  font-weight: 800;
+  letter-spacing: -.02em;
+  color: var(--text) !important;
+  text-decoration: none;
+  display: inline-block;
+  margin-bottom: .9rem;
+}
+
+.footer-logo span { color: var(--accent); }
+.footer-brand p { max-width: 34ch; color: var(--muted); line-height: 1.6; }
+
+.footer-col h5 {
+  font-family: "Syne", sans-serif;
+  font-size: .78rem;
+  font-weight: 700;
+  color: var(--text);
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  margin-bottom: 1rem;
+}
+
+.footer-col ul {
+  display: flex;
+  flex-direction: column;
+  gap: .65rem;
+  list-style: none;
+}
+
+.legal-page footer a {
+  color: var(--muted);
+  text-decoration: none;
+  transition: color .2s;
+}
+
+.legal-page footer a:hover { color: var(--accent); }
+
+/* Ausschließlich Links zur Datenschutzerklärung nutzen die Mint-Akzentfarbe. */
+.legal-page a[href*="datenschutz"],
+.legal-page a[href*="datenschutz"]:visited {
+  color: var(--accent);
+}
+
+.legal-page a[href*="datenschutz"]:hover {
+  color: #a7f3d0;
+}
+
+.legal-page .footer-bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 1.6rem;
+  flex-wrap: wrap;
+  gap: .6rem;
+}
+
+.legal-page footer a[href*="datenschutz"],
+.legal-page footer a[href*="datenschutz"]:visited {
+  color: var(--muted);
+}
+
+.legal-page footer a[href*="datenschutz"]:hover {
+  color: var(--accent);
+}
+
+@media (max-width: 960px) {
+  .main-nav {
+    justify-content: flex-start;
+    padding: 0 1.5rem;
+  }
+  .main-nav .nav-links,
+  .main-nav .nav-github { display: none; }
+  .main-nav .nav-logo { position: static; }
+  .nav-toggle { display: flex; }
+  .mobile-menu { display: block; }
+  html { scroll-padding-top: calc(var(--nav-h) + 1rem); }
+  .legal-page main {
+    padding-top: calc(var(--nav-h) + clamp(3.3rem, 9vw, 5rem));
+  }
+  .toc { top: calc(var(--nav-h) + 1rem); }
+}
+
+@media (max-width: 760px) {
+  .legal-page main {
+    width: min(100% - 2rem, 680px);
+    padding-bottom: 4rem;
+  }
+  .layout {
+    grid-template-columns: 1fr;
+    gap: 1.3rem;
+    margin-top: 2.5rem;
+  }
+  .toc { position: static; }
+}
+
+@media (max-width: 640px) {
+  .legal-page .footer-inner {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+
+  .legal-page .footer-bottom {
+    flex-direction: column;
+    text-align: center;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    scroll-behavior: auto !important;
+    transition-duration: .001ms !important;
+  }
+}
+
+@media print {
+  body.legal-page {
+    color: #111;
+    background: #fff;
+    font-family: Arial, sans-serif;
+  }
+  .main-nav, .mobile-menu, .toc, .draft-warning, footer { display: none !important; }
+  .legal-page main {
+    width: 100%;
+    padding: 0;
+  }
+  .layout { display: block; margin: 0; }
+  .legal-page article section {
+    break-inside: avoid;
+    border-color: #ccc;
+    color: #111;
+    background: #fff;
+  }
+  .legal-page h1, .legal-page h2, .legal-page h3 { color: #111; }
+  .legal-page a { color: inherit !important; }
+}
+
+</style>
+  <link rel="stylesheet" href="assets/site-header.css">
+  <script src="assets/site-header.js" defer></script>
+</head>
+<body class="legal-page">
+  <nav class="main-nav" aria-label="Hauptnavigation">
+    <a href="/" class="nav-logo">sms<span>.</span></a>
+    <ul class="nav-links">
+      <li><a href="/">Home</a></li>
+      <li><a href="projekte/">Projekte</a></li>
+      <li><a href="downloads">Downloads</a></li>
+      <li><a href="projekt-pipeline">Projekt-Pipeline</a></li>
+      <li><a href="vision">Vision</a></li>
+      <li><a href="wissen/">Wissen</a></li>
+    </ul>
+    <div class="nav-actions">
+      <button type="button" class="language-switch" data-language-target="/en/privacy" data-language-file-target="en/privacy.html" aria-label="Zur englischen Version wechseln" title="Zur englischen Version wechseln"><span class="language-option language-option-active" aria-hidden="true">DE</span><span class="language-separator" aria-hidden="true">/</span><span class="language-option" aria-hidden="true">EN</span></button>
+      <a href="https://github.com/simons-0427" target="_blank" rel="noopener noreferrer" class="nav-github">
+      <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/></svg>
+      GitHub
+    </a>
+    </div>
+    <button class="nav-toggle" type="button" aria-label="Menü öffnen" aria-expanded="false" aria-controls="mobile-menu">
+      <span></span><span></span><span></span>
+    </button>
+  </nav>
+
+  <div class="mobile-menu" id="mobile-menu">
+    <ul>
+      <li><a href="/">Home</a></li>
+      <li><a href="projekte/">Projekte</a></li>
+      <li><a href="downloads">Downloads</a></li>
+      <li><a href="projekt-pipeline">Projekt-Pipeline</a></li>
+      <li><a href="vision">Vision</a></li>
+      <li><a href="wissen/">Wissen</a></li>
+      <li>
+        <a href="https://github.com/simons-0427" target="_blank" rel="noopener noreferrer" class="mobile-github">
+          <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/></svg>
+          GitHub
+        </a>
+      </li>
+      <li class="mobile-language-row">
+  <span class="mobile-language-label">Sprache</span>
+  <button type="button" class="language-switch" data-language-target="/en/privacy" data-language-file-target="en/privacy.html" aria-label="Zur englischen Version wechseln" title="Zur englischen Version wechseln"><span class="language-option language-option-active" aria-hidden="true">DE</span><span class="language-separator" aria-hidden="true">/</span><span class="language-option" aria-hidden="true">EN</span></button>
+</li>
+<li class="mobile-menu-label">Auf dieser Seite</li>
+      <li><a href="#verantwortlicher">Verantwortlicher</a></li>
+      <li><a href="#hosting">Hosting</a></li>
+      <li><a href="#kontakt">Kontakt</a></li>
+      <li><a href="#lokale-daten">Lokale Daten</a></li>
+      <li><a href="#rechte">Ihre Rechte</a></li>
+    </ul>
+  </div>
+
+  <main>
+    <p class="eyebrow">Rechtliches</p>
+    <h1>Datenschutz-<br>erklärung</h1>
+    <p class="intro">Hier steht, welche Daten beim Besuch von smstark-projekt.de anfallen, welche Dienste beteiligt sind und welche Rechte Sie haben.</p>
+
+    <div class="layout">
+      <nav class="toc" aria-label="Inhalt der Datenschutzerklärung">
+        <strong>Inhalt</strong>
+        <ol>
+          <li><a href="#verantwortlicher">Verantwortlicher</a></li>
+          <li><a href="#hosting">Hosting und Serverprotokolle</a></li>
+          <li><a href="#kontakt">Kontakt und Web3Forms</a></li>
+          <li><a href="#lokale-daten">Lokale Browserdaten</a></li>
+          <li><a href="#fonts">Google Fonts</a></li>
+          <li><a href="#cdn">Externe Bibliotheken</a></li>
+          <li><a href="#links">Externe Links</a></li>
+          <li><a href="#speicherdauer">Speicherdauer</a></li>
+          <li><a href="#rechte">Ihre Rechte</a></li>
+        </ol>
+      </nav>
+
+      <article>
+        <section id="verantwortlicher">
+          <h2>1. Verantwortlicher</h2>
+          <address>
+            Simon Stark<br>
+            Hamburger Straße 44<br>
+            23730 Neustadt in Holstein<br>
+            Deutschland<br><br>
+            E-Mail: <a href="mailto:simonmstark@outlook.com">simonmstark@outlook.com</a>
+          </address>
+        </section>
+
+        <section id="hosting">
+          <h2>2. Hosting und Serverprotokolle</h2>
+          <p>Die Website liegt bei STRATO GmbH, Otto-Ostrowski-Straße 7, 10249 Berlin. STRATO verarbeitet beim Seitenaufruf technische Daten, damit die angeforderte Seite ausgeliefert und der Betrieb abgesichert werden kann.</p>
+          <p>Dazu können insbesondere IP-Adresse, Datum und Uhrzeit, aufgerufene Datei, übertragene Datenmenge, Referrer, Browsertyp, Betriebssystem und der Zugriffsstatus gehören. Die Rechtsgrundlage ist Art. 6 Abs. 1 lit. f DSGVO. Das berechtigte Interesse liegt im sicheren und störungsfreien Betrieb der Website.</p>
+          <p>STRATO handelt beim Hosting als Auftragsverarbeiter. Nach den veröffentlichten STRATO-Hinweisen werden Log- und temporäre Daten abhängig vom Sicherheits- und Betriebszweck für wenige Tage bis höchstens 60 bis 90 Tage gespeichert. Vertrags- oder gesetzliche Pflichten können im Einzelfall längere Fristen erfordern.</p>
+          <p>Weitere Informationen: <a href="https://www.strato.de/datenschutz/" rel="noopener noreferrer">Datenschutzhinweise von STRATO</a>.</p>
+        </section>
+
+        <section id="kontakt">
+          <h2>3. Kontakt per E-Mail und Kontaktformular</h2>
+          <p>Wenn Sie per E-Mail Kontakt aufnehmen, verarbeite ich die Absenderadresse, den Inhalt der Nachricht und alle weiteren Angaben, die Sie freiwillig mitsenden. Die Daten werden verwendet, um die Anfrage zu beantworten.</p>
+          <p>Das Kontaktformular auf der Startseite fragt Name, E-Mail-Adresse und Nachricht ab. Die Übermittlung läuft über Web3Forms beziehungsweise Web3Creative. Dabei können außerdem technische Protokolldaten wie IP-Adresse, Browsertyp und Zeitpunkt der Übermittlung verarbeitet werden.</p>
+          <p>Web3Forms arbeitet nach eigenen Angaben mit Amazon Web Services, Cloudflare und Hetzner. Der Dienst wird aus Indien betrieben. Für Übermittlungen außerhalb des Europäischen Wirtschaftsraums nennt Web3Forms die EU-Standardvertragsklauseln als Schutzmechanismus. Formulardaten können nach Angaben des Anbieters bis zu drei Jahre gespeichert werden, sofern sie nicht früher gelöscht werden.</p>
+          <p>Zur Spam-Abwehr kann Web3Forms die IP- und E-Mail-Adresse außerdem an CleanTalk oder Akismet übermitteln.</p>
+          <p>Die Rechtsgrundlage ist Art. 6 Abs. 1 lit. b DSGVO, soweit es um eine konkrete Anfrage oder vorvertragliche Kommunikation geht. Bei allgemeinen Nachrichten gilt Art. 6 Abs. 1 lit. f DSGVO. Das berechtigte Interesse besteht in der Bearbeitung und Dokumentation der Anfrage.</p>
+          <p>Weitere Informationen: <a href="https://web3forms.com/privacy" rel="noopener noreferrer">Datenschutzerklärung von Web3Forms</a>.</p>
+        </section>
+
+        <section id="lokale-daten">
+          <h2>4. Lokale Browserdaten in den Tools</h2>
+          <p>Das Ernährungstool speichert Eingaben und Einstellungen im lokalen Speicher Ihres Browsers. Dazu gehören Änderungen an der Lebensmitteldatenbank, Profilangaben sowie manuell geänderte Mindest- und Höchstwerte. Verwendet werden derzeit unter anderem die Schlüssel <code>ie_foods_v11</code>, <code>ie_profile_v2</code> und <code>ie_req_v4</code>.</p>
+          <p>Diese Daten bleiben auf Ihrem Gerät. Das Tool übermittelt sie nicht an mich oder an STRATO. Sie können die Einträge über die Rücksetzfunktionen des Tools oder durch Löschen der Websitedaten im Browser entfernen. Bei einem anderen Browser oder Gerät stehen sie nicht automatisch zur Verfügung.</p>
+          <p>Die lokale Speicherung ist erforderlich, um die ausdrücklich gewählte Konfiguration beim nächsten Aufruf wiederherzustellen. Sie erfolgt daher nach § 25 Abs. 2 Nr. 2 TDDDG ohne zusätzliche Einwilligung. Soweit die DSGVO anwendbar ist, beruht die Verarbeitung auf Art. 6 Abs. 1 lit. b beziehungsweise lit. f DSGVO.</p>
+          <p>Bitte tragen Sie keine Angaben ein, die Sie nicht lokal auf Ihrem Gerät speichern möchten. Das gilt besonders für Informationen zu Körper, Ernährung und Gesundheit.</p>
+        
+          <h3>Assetklassen-Backtester: Portfolios</h3>
+          <p>Wenn Sie ein Portfolio speichern oder eine Portfoliodatei importieren, speichert der Assetklassen-Backtester bis zu fünf eigene Portfolio-Konfigurationen im localStorage Ihres Browsers unter <code>sms.asset-backtester.portfolios.v1</code>. Gespeichert werden Name und optionale Beschreibung, eine zufällig erzeugte Portfolio-Kennung, Anlageklassen und Gewichte, Regeln und Grenzwerte, Hebel und zusätzliche Kosten, Rebalancing, Datenraster, Zeitraum und Optimierungseinstellungen sowie Angaben zur Berechnungsmethode und zum verwendeten Datenstand. Die deutsche und englische Version verwenden auf derselben Website denselben Speicher.</p>
+          <p>Das Zusammenstellen und Fertigstellen allein speichert kein Portfolio dauerhaft. Noch nicht gespeicherte Entwürfe, berechnete Tagesverläufe und die Auswahl der Vergleichslinien befinden sich nur im Arbeitsspeicher der geöffneten Seite. Auch simulierte Anschaffungstranchen, Rebalancing-Verkäufe, Verlusttöpfe und berechnete Steuerbeträge der Portfolios bleiben im Arbeitsspeicher; sie werden neu berechnet und weder als zusätzliche Browsereinträge gespeichert noch als Portfolio-Steuerprotokoll an den Server gesendet. Fertige und gespeicherte Portfolios werden zusätzlich unter Einzelverläufe angezeigt. Diese Darstellung erzeugt keine zusätzliche dauerhafte Speicherung; gespeicherte Konfigurationen werden nach erneutem Öffnen anhand der dann verfügbaren Kursdaten neu berechnet.</p>
+          <p>Portfolio-Namen, Beschreibungen, vollständige Gewichtungen und Portfolioregeln werden durch diese Speicherfunktion nicht an mich oder den Hostinganbieter übermittelt. Für die Berechnung ruft der Browser jedoch Kursdaten über die Website-API ab. Dabei werden die angefragten Anlageklassen, Anfang und Ende des Zeitraums und Rechenparameter übertragen. Diese Anfragen können zusammen mit technischen Zugriffsdaten in den unter Hosting beschriebenen Serverprotokollen erscheinen. Eine automatische Synchronisierung der gespeicherten Portfolios mit einem Benutzerkonto oder anderen Geräten findet nicht statt.</p>
+          <p>Die Annahmen des Steuermodells, insbesondere gewählter Steuersatz, verfügbare Pauschbeträge, Verlustverrechnung und steuerliche Anlageformen, werden im Browser berechnet. Die Seite übernimmt diese Einstellungen außerdem in die URL, damit der gewählte Vergleich wiederhergestellt werden kann. Beim erneuten Aufruf oder Weitergeben eines Links können diese Parameter im Seitenaufruf und in technischen Referrer-Angaben enthalten sein und dadurch in Hostingprotokollen erscheinen. Sie werden nicht automatisch zu gespeicherten Portfolio-Konfigurationen hinzugefügt.</p>
+          <p>Die gespeicherten Konfigurationen bleiben erhalten, bis Sie sie im Backtester löschen, die Websitedaten im Browser entfernen oder der Browser den Speicher löscht. Es gibt keine feste automatische Löschfrist. Je nach privatem Browsermodus oder Speichereinstellungen kann die Speicherung eingeschränkt sein. Ein anderer Browser oder ein anderes Browserprofil greift nicht automatisch auf diese Daten zu.</p>
+          <p>Über JSON exportieren können Sie eine Datei mit den Portfolio-Konfigurationen und ihren Berechnungsangaben herunterladen. JSON importieren verarbeitet die ausgewählte Datei im Browser; die Datei wird dafür nicht auf die Website hochgeladen. Exportdateien sind unverschlüsselt. Sie verbleiben unabhängig vom Browserspeicher an Ihrem gewählten Speicherort und müssen bei Bedarf dort gesondert gelöscht werden. Tragen Sie keine vertraulichen Konto-, Depot- oder Zugangsdaten in Namen oder Beschreibungen ein.</p>
+          <p>Die Speicherung dient der von Ihnen ausdrücklich gewählten Funktion, ein Portfolio zu speichern und später wieder zu laden. Für den dafür erforderlichen Zugriff auf den Browserspeicher gilt <a href="https://www.gesetze-im-internet.de/ttdsg/__25.html" rel="noopener noreferrer">§ 25 Abs. 2 Nr. 2 TDDDG</a>. Die allgemeinen Angaben zu Hosting, Speicherdauer und Ihren Datenschutzrechten gelten ergänzend.</p>
+        </section>
+
+        <section id="fonts">
+          <h2>5. Google Fonts</h2>
+          <p>Mehrere Seiten laden die Schriftarten „Syne“, „DM Sans“ und teilweise „Playfair Display“ von Google Fonts. Beim Aufruf stellt der Browser dafür eine Verbindung zu Google-Servern her. Dabei erhält Google insbesondere die IP-Adresse, Browserinformationen sowie Zeitpunkt und angeforderte Ressource.</p>
+          <p>Anbieter für Nutzer im Europäischen Wirtschaftsraum ist Google Ireland Limited, Gordon House, Barrow Street, Dublin 4, Irland. Eine Verarbeitung durch Google LLC in den USA ist möglich. Google kann hierfür auf den EU-US Data Privacy Framework und ergänzend auf Standardvertragsklauseln zurückgreifen.</p>
+          <p>Die Einbindung dient einer einheitlichen Darstellung der Website. Als Rechtsgrundlage wird Art. 6 Abs. 1 lit. f DSGVO herangezogen. Das berechtigte Interesse liegt in einer lesbaren und konsistenten Gestaltung. Sie können die Verbindung vermeiden, indem Sie externe Schriftarten im Browser blockieren; die Website bleibt mit einer Ersatzschrift lesbar.</p>
+          <p>Weitere Informationen: <a href="https://policies.google.com/privacy" rel="noopener noreferrer">Datenschutzerklärung von Google</a>.</p>
+        </section>
+
+        <section id="cdn">
+          <h2>6. Chart.js über externe Content Delivery Networks</h2>
+          <p>Die FIRE- und Kelly-Dashboards laden Chart.js über jsDelivr beziehungsweise cdnjs von Cloudflare. Diese Bibliothek zeichnet die Diagramme im Browser. Beim Laden der Datei werden technische Verbindungsdaten, insbesondere die IP-Adresse, Browserdaten, Zeitpunkt und angeforderte Ressource, an den jeweiligen CDN-Anbieter übertragen.</p>
+          <p>Die Rechtsgrundlage ist Art. 6 Abs. 1 lit. f DSGVO. Das berechtigte Interesse liegt in der zuverlässigen Auslieferung der für die Diagramme benötigten Programmdatei. Eine Verarbeitung in Staaten außerhalb des Europäischen Wirtschaftsraums kann nicht ausgeschlossen werden.</p>
+          <ul>
+            <li><a href="https://www.cloudflare.com/privacypolicy/" rel="noopener noreferrer">Datenschutzhinweise von Cloudflare</a></li>
+            <li><a href="https://www.jsdelivr.com/terms/privacy-policy-jsdelivr-net" rel="noopener noreferrer">Datenschutzhinweise von jsDelivr</a></li>
+          </ul>
+        </section>
+
+        <section id="links">
+          <h2>7. Externe Links</h2>
+          <p>Die Website verlinkt unter anderem auf GitHub, LinkedIn und Quellen zu einzelnen Artikeln. Beim bloßen Anzeigen meiner Website werden an diese Ziele keine Daten übertragen. Erst wenn Sie einen externen Link öffnen, gelten die Datenschutzbestimmungen des jeweiligen Anbieters.</p>
+        </section>
+
+        <section id="cookies">
+          <h2>8. Cookies, Reichweitenmessung und Werbung</h2>
+          <p>Ich setze keine eigenen Analyse- oder Werbedienste ein und erstelle keine Nutzungsprofile. Die Website verwendet nach aktuellem Stand keine eigenen Tracking-Cookies. Technisch erforderliche Speicherungen und die oben beschriebenen Verbindungen zu Dienstleistern bleiben davon unberührt.</p>
+        </section>
+
+        <section id="speicherdauer">
+          <h2>9. Speicherdauer</h2>
+          <p>Ich speichere personenbezogene Daten nur so lange, wie sie für den jeweiligen Zweck gebraucht werden. Kontaktanfragen werden nach Abschluss der Bearbeitung gelöscht, sofern keine gesetzlichen Aufbewahrungspflichten oder berechtigten Gründe für eine weitere Speicherung bestehen. Die Fristen externer Anbieter sind in den jeweiligen Abschnitten beschrieben.</p>
+        </section>
+
+        <section id="rechte">
+          <h2>10. Ihre Rechte</h2>
+          <p>Sie haben im Rahmen der gesetzlichen Voraussetzungen folgende Rechte:</p>
+          <ul>
+            <li>Auskunft über die verarbeiteten personenbezogenen Daten nach Art. 15 DSGVO</li>
+            <li>Berichtigung unrichtiger Daten nach Art. 16 DSGVO</li>
+            <li>Löschung nach Art. 17 DSGVO</li>
+            <li>Einschränkung der Verarbeitung nach Art. 18 DSGVO</li>
+            <li>Datenübertragbarkeit nach Art. 20 DSGVO</li>
+            <li>Widerspruch gegen Verarbeitungen nach Art. 21 DSGVO</li>
+            <li>Widerruf einer Einwilligung mit Wirkung für die Zukunft nach Art. 7 Abs. 3 DSGVO</li>
+          </ul>
+          <p>Zur Ausübung Ihrer Rechte genügt eine E-Mail an <a href="mailto:simonmstark@outlook.com">simonmstark@outlook.com</a>.</p>
+          <p>Sie können sich außerdem nach Art. 77 DSGVO bei einer Datenschutzaufsichtsbehörde beschweren. Zuständig ist in der Regel die Aufsichtsbehörde Ihres Wohnorts, Ihres Arbeitsplatzes oder des Orts des vermuteten Verstoßes.</p>
+          Unabhängiges Landeszentrum für Datenschutz Schleswig-Holstein (ULD), Holstenstraße 98, 24103 Kiel, www.datenschutzzentrum.de</span></p>
+        </section>
+
+        <section id="sicherheit">
+          <h2>11. Verschlüsselung und automatisierte Entscheidungen</h2>
+          <p>Die veröffentlichte Website soll ausschließlich über HTTPS ausgeliefert werden. Dadurch werden Daten auf dem Transportweg verschlüsselt. Eine automatisierte Entscheidungsfindung oder ein Profiling im Sinne von Art. 22 DSGVO findet nicht statt.</p>
+        </section>
+
+        <section id="stand">
+          <h2>12. Stand und Änderungen</h2>
+          <p>Stand: 28. Oktober 2026</p>
+          <p>Wenn sich Dienste, Funktionen oder gesetzliche Anforderungen ändern, wird diese Datenschutzerklärung angepasst.</p>
+        </section>
+      </article>
+    </div>
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <a href="/" class="footer-logo">sms<span>.</span></a>
+        <p>Persönliche Finance-Tools, Dashboards und Programmierprojekte von Simon Stark. Stetig im Aufbau.</p>
+      </div>
+      <div class="footer-col">
+        <h5>Navigation</h5>
+        <ul>
+          <li><a href="projekte/">Projekte</a></li>
+          <li><a href="downloads">Downloads</a></li>
+          <li><a href="projekt-pipeline">Projekt-Pipeline</a></li>
+          <li><a href="vision">Vision</a></li>
+          <li><a href="wissen/">Wissen</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h5>Rechtliches</h5>
+        <ul>
+          <li><a href="/impressum">Impressum</a></li>
+          <li><a href="/datenschutz" aria-current="page">Datenschutz</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 Simon Stark</span>
+      <a href="https://github.com/simons-0427" target="_blank" rel="noopener noreferrer">github.com/simons-0427</a>
+    </div>
+  </footer>
+  <script>
+const navToggle = document.querySelector(".nav-toggle");
+const mobileMenu = document.getElementById("mobile-menu");
+
+if (navToggle && mobileMenu) {
+  const closeMenu = () => {
+    navToggle.classList.remove("open");
+    mobileMenu.classList.remove("open");
+    navToggle.setAttribute("aria-expanded", "false");
+    navToggle.setAttribute("aria-label", "Menü öffnen");
+  };
+
+  navToggle.addEventListener("click", () => {
+    const open = navToggle.classList.toggle("open");
+    mobileMenu.classList.toggle("open", open);
+    navToggle.setAttribute("aria-expanded", open ? "true" : "false");
+    navToggle.setAttribute("aria-label", open ? "Menü schließen" : "Menü öffnen");
+  });
+
+  mobileMenu.querySelectorAll("a").forEach(link => {
+    link.addEventListener("click", closeMenu);
+  });
+}
+
+</script>
+</body>
+</html>
